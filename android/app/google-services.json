@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1041416288073",
+    "project_id": "daim-db",
+    "storage_bucket": "daim-db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041416288073:android:fba3a686f015541c618c98",
+        "android_client_info": {
+          "package_name": "com.cakmakstudios.daim"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhrM11kjQOdc888HbHZLl4GqDbCS3skIU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
