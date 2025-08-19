@@ -51,6 +51,10 @@
 		<false/>
 		<key>CFBundleDisplayName</key>
 		<string>Daim</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Konumunuzu, size en yakın kafe ve restoranları gösterebilmek için kullanıyoruz.</string>
+		<key>NSBluetoothAlwaysUsageDescription</key>
+		<string>Bluetooth, cihaz bağlantılarını yönetmek için gereklidir.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>QR kodu taramak için kamera erişimi gereklidir.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
