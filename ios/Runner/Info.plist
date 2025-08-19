@@ -57,12 +57,12 @@
 		<string>Yakın konum tabanlı özellikler için gerekli.</string>
 		<key>CFBundleURLTypes</key>
 		<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-			<string>daimapp</string>
-			</array>
-		</dict>
+			<dict>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>daimapp</string>
+				</array>
+			</dict>
 		</array>
 	</dict>
 </plist>
