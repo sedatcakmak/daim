@@ -32,7 +32,7 @@ android {
         applicationId = "com.cakmakstudios.daim"
         minSdk = 23
         targetSdk = 36
-        versionCode = 19
+        versionCode = 20
         versionName = "1.0.0"
     }
 
