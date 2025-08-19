@@ -53,6 +53,8 @@
 		<string>Daim</string>
 		<key>NSCameraUsageDescription</key>
 		<string>QR kodu taramak için kamera erişimi gereklidir.</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Yakın konum tabanlı özellikler için gerekli.</string>
 		<key>CFBundleURLTypes</key>
 		<array>
 		<dict>
