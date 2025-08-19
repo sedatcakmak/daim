@@ -85,7 +85,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
               _buildContinueButton(),
               const SizedBox(height: 40),
               _buildTermsAndPrivacy(),
-              const SizedBox(height: 40),
+              const SizedBox(height: 50),
             ],
           ),
         ),

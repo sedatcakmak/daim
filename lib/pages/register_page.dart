@@ -309,6 +309,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           fontWeight: FontWeight.bold)),
                 ),
               ),
+              const SizedBox(height: 50),
             ],
           ),
         ),
