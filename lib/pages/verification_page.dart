@@ -47,6 +47,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   }
 
   // --- PHONE VERIFICATION FLOW ---
+  int? _resendToken;
 
   Future<void> _startVerification() async {
     setState(() {
@@ -57,8 +58,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     try {
       await auth.verifyPhoneNumber(
         phoneNumber: widget.phone,
+        timeout: const Duration(seconds: 60),
+        forceResendingToken: _resendToken, // <-- kritik
         verificationCompleted: (PhoneAuthCredential credential) async {
-          // (Otomatik doğrulama nadiren devreye girer)
           try {
             await auth.signInWithCredential(credential);
             if (!mounted) return;
@@ -84,7 +86,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
           if (!mounted) return;
           setState(() {
             _verificationId = verificationId;
-            _loading = false; // kod geldi, input’u aç
+            _resendToken = resendToken;
+            _loading = false;
           });
           _showSnack('Doğrulama kodu gönderildi.');
         },

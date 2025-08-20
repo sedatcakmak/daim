@@ -22,8 +22,10 @@ void main() async {
 
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.playIntegrity,
-    appleProvider: AppleProvider.appAttest,
+    appleProvider: AppleProvider.appAttestWithDeviceCheckFallback,
   );
+
+  await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
 
   LanguageProvider languageProvider = LanguageProvider();
   await languageProvider.loadSavedLanguage();

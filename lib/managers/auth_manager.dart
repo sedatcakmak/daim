@@ -44,7 +44,7 @@ class AuthManager {
         context,
         MaterialPageRoute(
             builder: (context) => isEmployee ? EmployeeHomePage() : HomePage()),
-            (Route<dynamic> route) => false,
+        (Route<dynamic> route) => false,
       );
     }
   }
@@ -59,7 +59,7 @@ class AuthManager {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => PhoneNumberScreen()),
-            (Route<dynamic> route) => false,
+        (Route<dynamic> route) => false,
       );
     }
   }
