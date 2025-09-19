@@ -1,7 +1,7 @@
 name: daim
 description: "Kafe ve restoranlar için özel tasarlanmış modern sadakat yönetim sistemi!"
 publish_to: 'none'
-version: 1.0.0+5
+version: 1.0.6+6
 
 environment:
   sdk: ^3.9.0  # Flutter 3.35.1 ile gelen minimum Dart sürümü
@@ -55,11 +55,13 @@ dependency_overrides:
   characters: ^1.4.1
   material_color_utilities: ^0.13.0
   meta: ^1.17.0
+  package_info_plus: ^9.0.0
   test_api: ^0.7.7
 
 flutter:
   uses-material-design: true
   assets:
+    - assets/badges.json
     - assets/star.png
     - assets/membership.png
     - assets/silver.png

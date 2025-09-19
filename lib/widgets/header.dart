@@ -20,15 +20,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         padding: EdgeInsets.only(top: top, left: 16, right: 16),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [
-              Color(0xFFEE741B),
-              Color(0xFFFF9333),
-            ], // Açık mavi geçiş
+            colors: [Color(0xFFEE741B), Color(0xFFFF9333)], // Açık mavi geçiş
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius:
-              const BorderRadius.vertical(bottom: Radius.circular(22)),
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(22),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.08),
@@ -53,6 +51,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             // Butonlar yan yana
             Row(
               children: [
+                /*
                 _iconButton(
                   icon: Icons.language,
                   onTap: () {
@@ -65,6 +64,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   },
                 ),
                 const SizedBox(width: 12),
+                */
                 _iconButton(
                   icon: Icons.notifications,
                   onTap: () {
@@ -72,7 +72,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => const NotificationsPage()),
+                          builder: (_) => const NotificationsPage(),
+                        ),
                       );
                     }
                   },
@@ -85,13 +86,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => const AccountInformation()),
+                          builder: (_) => const AccountInformation(),
+                        ),
                       );
                     }
                   },
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

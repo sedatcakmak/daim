@@ -21,7 +21,7 @@ class CustomBottomNavBar extends StatelessWidget {
         destination = const RestaurantListPage();
         break;
       case 2:
-        destination = const QR();
+        destination = const QRPage();
         break;
       case 3:
         destination = const Locations();
@@ -46,11 +46,7 @@ class CustomBottomNavBar extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.grey,
-            spreadRadius: 3,
-            blurRadius: 8,
-          )
+          BoxShadow(color: Colors.grey, spreadRadius: 3, blurRadius: 8),
         ],
         color: Colors.white,
       ),
@@ -63,7 +59,8 @@ class CustomBottomNavBar extends StatelessWidget {
           Expanded(child: _buildNavItem(context, Icons.apps, 'Restoranlar', 1)),
           _buildQRNavItem(context, 2),
           Expanded(
-              child: _buildNavItem(context, Icons.location_on, 'Lokasyon', 3)),
+            child: _buildNavItem(context, Icons.location_on, 'Lokasyon', 3),
+          ),
           Expanded(child: _buildNavItem(context, Icons.star, 'Cüzdan', 4)),
         ],
       ),
@@ -71,7 +68,11 @@ class CustomBottomNavBar extends StatelessWidget {
   }
 
   Widget _buildNavItem(
-      BuildContext context, IconData icon, String label, int index) {
+    BuildContext context,
+    IconData icon,
+    String label,
+    int index,
+  ) {
     bool isSelected = index == currentIndex;
 
     return GestureDetector(
@@ -123,18 +124,10 @@ class CustomBottomNavBar extends StatelessWidget {
           color: Color(0xFFEE741B),
           shape: BoxShape.circle,
           boxShadow: [
-            BoxShadow(
-              color: Color(0xFFEE741B),
-              spreadRadius: 1,
-              blurRadius: 3,
-            )
+            BoxShadow(color: Color(0xFFEE741B), spreadRadius: 1, blurRadius: 3),
           ],
         ),
-        child: const Icon(
-          Icons.qr_code_scanner,
-          color: Colors.white,
-          size: 32,
-        ),
+        child: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 32),
       ),
     );
   }

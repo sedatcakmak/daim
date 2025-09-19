@@ -1,0 +1,50 @@
+[
+    {
+        "id": "loyal_10",
+        "name": "Sadık Müşteri",
+        "description": "Aynı işletmeden 10 kez sipariş ver.",
+        "icon": "favorite"
+    },
+    {
+        "id": "loyal_20",
+        "name": "Favori Müşteri",
+        "description": "Aynı işletmeden 20 kez sipariş ver.",
+        "icon": "star"
+    },
+    {
+        "id": "explorer_5",
+        "name": "Keşifçi",
+        "description": "5 farklı işletmeden sipariş ver.",
+        "icon": "travel_explore"
+    },
+    {
+        "id": "explorer_10",
+        "name": "Gezgin",
+        "description": "10 farklı işletmeden sipariş ver.",
+        "icon": "flight_takeoff"
+    },
+    {
+        "id": "spender_50",
+        "name": "Özel Müşteri",
+        "description": "50 yıldız harca.",
+        "icon": "workspace_premium"
+    },
+    {
+        "id": "spender_100",
+        "name": "VIP Müşteri",
+        "description": "100 yıldız harca.",
+        "icon": "diamond"
+    },
+    {
+        "id": "commenter_3",
+        "name": "Yorumcu",
+        "description": "3 siparişe yorum yap.",
+        "icon": "comment"
+    },
+    {
+        "id": "commenter_10",
+        "name": "Eleştirmen",
+        "description": "10 siparişe yorum yap.",
+        "icon": "reviews"
+    }
+]

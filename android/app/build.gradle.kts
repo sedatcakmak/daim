@@ -32,8 +32,8 @@ android {
         applicationId = "com.cakmakstudios.daim"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 22
-        versionName = "1.0.0"
+        versionCode = 31
+        versionName = "1.0.6"
     }
 
     signingConfigs {
@@ -65,8 +65,9 @@ flutter {
 }
 
 dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.2.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.android.play:feature-delivery:2.1.0")
+    implementation("com.google.android.play:integrity:1.4.0")
 }

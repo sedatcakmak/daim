@@ -89,9 +89,10 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
                       height: 70,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Icon(
-                          Icons.broken_image,
-                          size: 70,
-                          color: Colors.grey),
+                        Icons.broken_image,
+                        size: 70,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -102,7 +103,9 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
                         Text(
                           "${menuItem.name} (${orderItem.amount} adet)",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
                           menuItem.description,
@@ -133,24 +136,24 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
             child: ElevatedButton.icon(
               onPressed: () async {
                 try {
-                  await AppLoader.removeStarsByDocId(
-                      widget.order.userId, widget.order.price);
+                  await AppLoader.removeStarsByPhone(
+                    widget.order.phone,
+                    widget.order.price,
+                  );
                   await AppLoader.movePendingToOrders(widget.order);
 
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text("Sipariş başarıyla onaylandı."),
-                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Sipariş başarıyla onaylandı.")),
+                  );
 
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => EmployeeHomePage(),
-                    ),
+                    MaterialPageRoute(builder: (_) => EmployeeHomePage()),
                   );
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text("Sipariş onaylanamadı: $e"),
-                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Sipariş onaylanamadı: $e")),
+                  );
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -163,9 +166,10 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
               label: Text(
                 "Onayla",
                 style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               icon: Icon(Icons.check, size: 24, color: Colors.white),
             ),
@@ -184,9 +188,10 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
               label: Text(
                 "Reddet",
                 style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               icon: Icon(Icons.close, size: 24, color: Colors.white),
             ),
@@ -202,11 +207,7 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
       borderRadius: BorderRadius.circular(12),
       border: Border.all(color: Colors.grey.shade300),
       boxShadow: [
-        BoxShadow(
-          color: Colors.grey.shade200,
-          spreadRadius: 1,
-          blurRadius: 3,
-        ),
+        BoxShadow(color: Colors.grey.shade200, spreadRadius: 1, blurRadius: 3),
       ],
     );
   }
@@ -228,8 +229,11 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
                   width: 80,
                   height: 80,
                   errorBuilder: (context, error, stackTrace) {
-                    return Icon(Icons.broken_image,
-                        size: 80, color: Colors.grey);
+                    return Icon(
+                      Icons.broken_image,
+                      size: 80,
+                      color: Colors.grey,
+                    );
                   },
                 ),
                 SizedBox(width: 12),
@@ -242,13 +246,17 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
                           TextSpan(
                             text: "Müşteri: ",
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           TextSpan(
                             text:
                                 "${widget.order.name} ${widget.order.surname}",
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.normal),
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                            ),
                           ),
                         ],
                       ),
@@ -259,13 +267,18 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
                           TextSpan(
                             text: "Tarih: ",
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           TextSpan(
-                            text: DateFormat('HH:mm:ss dd/MM/yyyy')
-                                .format(widget.order.createdAt.toDate()),
+                            text: DateFormat(
+                              'HH:mm:ss dd/MM/yyyy',
+                            ).format(widget.order.createdAt.toDate()),
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.normal),
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                            ),
                           ),
                         ],
                       ),
@@ -276,12 +289,16 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
                           TextSpan(
                             text: "Toplam Fiyat: ",
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           TextSpan(
                             text: "${widget.order.price} ⭐",
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.normal),
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                            ),
                           ),
                         ],
                       ),

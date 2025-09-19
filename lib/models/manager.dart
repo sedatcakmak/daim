@@ -1,17 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daim/models/app_loader.dart';
+import 'package:daim/models/information.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Manager {
   static final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   static Future<String> createUser(
-      String name, String surname, String phone, String city) async {
+    String name,
+    String surname,
+    String phone,
+    String city,
+  ) async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
 
-      DocumentSnapshot userDoc =
-          await firestore.collection('users').doc(userId).get();
+      DocumentSnapshot userDoc = await firestore
+          .collection('users')
+          .doc(userId)
+          .get();
 
       if (userDoc.exists) {
         print("Bu kullanıcı zaten kayıtlı!");
@@ -45,74 +52,54 @@ class Manager {
     }
   }
 
-  static Future<String> addActivity(String type, int amount) async {
-    try {
-      Map<String, dynamic> activityData = {
-        'type': type,
-        'amount': amount,
-        'created_at': Timestamp.now(),
-      };
+  static Future<bool> isReviewed({
+    required String restaurantId,
+    required String orderId,
+  }) async {
+    QuerySnapshot existingReview = await FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(restaurantId)
+        .collection('reviews')
+        .where('order_id', isEqualTo: orderId)
+        .get();
 
-      await firestore
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('activities')
-          .add(activityData);
-
-      return "✅ Aktivite başarıyla eklendi!";
-    } catch (e) {
-      return "❌ Aktivite eklenirken hata oluştu: $e";
+    if (existingReview.docs.isNotEmpty) {
+      print("Bu sipariş için zaten bir değerlendirme yapılmış.");
+      return true;
     }
+
+    return false;
   }
 
-  static Future<String> addNotification(
-      String description, String title, String image) async {
+  static Future<bool> addReview({
+    required String restaurantId,
+    required String comment,
+    required int rating,
+    required String orderId,
+  }) async {
     try {
-      Map<String, dynamic> notificationData = {
-        'description': description,
-        'title': title,
-        'imageUrl': image,
-        'date': Timestamp.now(),
-      };
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantId)
+          .collection('reviews')
+          .add({
+            'comment': comment,
+            'rating': rating,
+            'order_id': orderId,
+            'date': FieldValue.serverTimestamp(),
+          });
 
-      await firestore
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('notifications')
-          .add(notificationData);
+      Information.restaurants
+          .where((element) => element.id == restaurantId)
+          .first
+          .reviews
+          .add(rating);
 
-      return "✅ Bildirim başarıyla eklendi!";
+      print("Yorum başarıyla eklendi.");
+      return true;
     } catch (e) {
-      return "❌ Bildirim eklenirken hata oluştu: $e";
-    }
-  }
-
-  static Future<String> addStar(String restaurantId, int amount) async {
-    try {
-      CollectionReference starsRef = firestore
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('stars');
-      QuerySnapshot existingStars =
-          await starsRef.where('restaurant_id', isEqualTo: restaurantId).get();
-
-      if (existingStars.docs.isNotEmpty) {
-        String starDocId = existingStars.docs.first.id;
-        await starsRef.doc(starDocId).update({
-          'amount': FieldValue.increment(amount),
-        });
-
-        return "✅ Mevcut restorana yıldız eklendi!";
-      } else {
-        await starsRef.add({
-          'restaurant_id': restaurantId,
-          'amount': amount,
-        });
-
-        return "✅ Yeni restoran için yıldız oluşturuldu!";
-      }
-    } catch (e) {
-      return "❌ Yıldız eklenirken hata oluştu: $e";
+      print("Yorum eklenirken hata oluştu: $e");
+      return false;
     }
   }
 }

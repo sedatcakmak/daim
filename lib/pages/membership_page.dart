@@ -42,7 +42,9 @@ class Membership extends StatelessWidget {
                           "Mevcut Üyelik: $name",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
                         SizedBox(height: 4),
                         Text(
@@ -59,14 +61,16 @@ class Membership extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: Colors.blueAccent, width: 2),
+                                  color: Color(0xFFEE741B),
+                                  width: 2,
+                                ),
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: LinearProgressIndicator(
                                   value: required > 0 ? total / required : 1,
                                   backgroundColor: Colors.white,
-                                  color: Colors.blueAccent,
+                                  color: Color(0xFFEE741B),
                                   minHeight: 35,
                                 ),
                               ),
@@ -88,23 +92,41 @@ class Membership extends StatelessWidget {
                   SizedBox(height: 8),
                   Divider(),
                   SizedBox(height: 8),
-                  membershipCard("Gümüş Üye", "assets/silver.png", 0, false,
-                      ["Başlangıç seviyesinde erişim"]),
-                  SizedBox(height: 16),
-                  membershipCard("Altın Üye", "assets/gold.png", 25, false, [
-                    "Üyeliğinize özel kampanyalar",
-                    "%25 daha fazla yıldız kazan"
-                  ]),
-                  SizedBox(height: 16),
-                  membershipCard("Elmas Üye", "assets/diamond.png", 50, false, [
-                    "Üyeliğinize özel kampanyalar",
-                    "%50 daha fazla yıldız kazan"
-                  ]),
-                  SizedBox(height: 16),
-                  membershipCard("Premium Üye", "assets/premium.png", 0, true, [
-                    "Üyeliğinize özel kampanyalar",
-                    "%100 daha fazla yıldız kazan"
-                  ]),
+                  membershipCard(
+                    "Gümüş Üye",
+                    Icons.circle,
+                    Colors.grey,
+                    0,
+                    false,
+                    ["Başlangıç seviyesinde erişim"],
+                  ),
+                  SizedBox(height: 8),
+                  membershipCard(
+                    "Altın Üye",
+                    Icons.square,
+                    Color(0xFFEE741B),
+                    25,
+                    false,
+                    ["Üyeliğine özel kampanyalar"],
+                  ),
+                  SizedBox(height: 8),
+                  membershipCard(
+                    "Elmas Üye",
+                    Icons.pentagon,
+                    Colors.blue,
+                    50,
+                    false,
+                    ["Üyeliğine özel kampanyalar"],
+                  ),
+                  SizedBox(height: 8),
+                  membershipCard(
+                    "Premium Üye",
+                    Icons.hexagon,
+                    Colors.purpleAccent,
+                    0,
+                    true,
+                    ["Üyeliğine özel kampanyalar"],
+                  ),
                 ],
               ),
             ),
@@ -116,18 +138,25 @@ class Membership extends StatelessWidget {
   }
 }
 
-Widget membershipCard(String name, String asset, int star, bool isPremium,
-    List<String> benefits) {
+Widget membershipCard(
+  String name,
+  IconData icon,
+  Color color,
+  int star,
+  bool isPremium,
+  List<String> benefits,
+) {
   return Card(
     color: Colors.white,
     elevation: 3,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
       side: BorderSide(
-          color: membership == name
-              ? Colors.green
-              : (isPremium ? Colors.purpleAccent : Colors.grey),
-          width: 2),
+        color: membership == name
+            ? Colors.green
+            : (isPremium ? Colors.purpleAccent : Colors.grey),
+        width: 2,
+      ),
     ),
     child: SizedBox(
       width: double.infinity,
@@ -139,27 +168,25 @@ Widget membershipCard(String name, String asset, int star, bool isPremium,
           children: [
             Row(
               children: [
-                Image.asset(
-                  asset,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                ),
+                Icon(icon, size: 50, color: color),
                 SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       name,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                      style: TextStyle(
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
                     ),
                     Text(
                       isPremium
                           ? "Özel Üyelik"
                           : (star > 0
-                              ? "$star siparişte açılır"
-                              : "Varsayılan Üyelik"),
+                                ? "$star siparişte açılır"
+                                : "Varsayılan Üyelik"),
                       style: TextStyle(fontSize: 16),
                     ),
                   ],

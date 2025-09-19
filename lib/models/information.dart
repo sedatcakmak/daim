@@ -13,11 +13,10 @@ class Information {
   static String phone = "";
   static String city = "";
   static String userId = "";
-  static Timestamp? birthday;
-  static Timestamp? register;
 
   static RestaurantModel? restaurant;
 
+  static List<String> badges = [];
   static List<StarModel> wallets = [];
   static List<CampaignModel> campaigns = [];
   static List<NotificationModel> notifications = [];

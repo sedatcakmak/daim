@@ -23,8 +23,10 @@ class TermsOfUse extends StatelessWidget {
                   children: [
                     Text(
                       "Kullanım Şartları",
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text("Son Güncelleme: 24 Nisan 2025"),
                   ],
@@ -36,47 +38,60 @@ class TermsOfUse extends StatelessWidget {
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
-              Text("Şartların Kabulu",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                "Şartların Kabulu",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               Text(
                 "Uygulamayı indirmek, yüklemek veya kullanmakla bu şartları kabul etmiş sayılırsınız. Kabul etmediğiniz takdirde Uygulamayı kullanmayınız.",
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
-              Text("Lisans ve Kullanım",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                "Lisans ve Kullanım",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               Text(
                 "Sağlayıcı size, kişisel, ticari olmayan kullanım amacıyla Uygulamayı geri alınamaz, münhasır olmayan, devredilemez bir lisansla kullanma hakkı verir.",
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
-              Text("Gizlilik ve Veri Koruma",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                "Gizlilik ve Veri Koruma",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               Text(
                 "Uygulama; sağladığınız kişisel verileri, yalnızca Hizmet’in sağlanması ve iyileştirilmesi amacıyla işler. Detaylar için lütfen Uygulama içindeki Gizlilik Politikası’nı inceleyin. ",
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
-              Text("Sorumluluk Sınırlandırması",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                "Sorumluluk Sınırlandırması",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               Text(
                 "Sağlayıcı, Uygulamanın kesintisiz, hatasız çalışacağı veya belirli bir amaca uygun olduğu konusunda garanti vermez. Kullanıcı, Uygulama kullanımından doğabilecek doğrudan ya da dolaylı zararları kendi sorumluluğunda karşılar.",
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
-              Text("Şartlarda Değişiklik",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                "Şartlarda Değişiklik",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               Text(
                 "cakmak studios, bu şartları önceden bildirimde bulunmaksızın güncelleyebilir. Güncellenen metin Uygulama’da yayımlandığı anda yürürlüğe girer; kullanımınıza devam ederek yeni şartları kabul etmiş olursunuz.",
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
-              Text("İletişim",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                "İletişim",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               Text(
                 "Her türlü soru, talep veya itirazınız için\ne-posta: support@daimapp.com\nadresinden bize ulaşabilirsiniz.",
                 style: TextStyle(fontSize: 16),
               ),
+              SizedBox(height: 50),
             ],
           ),
         ),

@@ -1,8 +1,8 @@
 import 'package:daim/models/restaurant_model.dart';
-import 'package:daim/pages/menu_page.dart';
 import 'package:daim/services/restaurant_service.dart';
 import 'package:daim/widgets/bottom.dart';
 import 'package:daim/widgets/header.dart';
+import 'package:daim/widgets/restaurant_card.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -24,7 +24,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
 
   List<String> sortingOptions = [
     "En yakından en uzağa",
-    "En uzaktan en yakına"
+    "En uzaktan en yakına",
   ];
 
   void _showSortingOptions() {
@@ -61,9 +61,8 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
 
   Future<bool> _getCurrentLocation() async {
     Position position = await Geolocator.getCurrentPosition(
-        locationSettings: LocationSettings(
-      accuracy: LocationAccuracy.high,
-    ));
+      locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
+    );
     setState(() {
       userLatitude = position.latitude;
       userLongitude = position.longitude;
@@ -80,24 +79,49 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<RestaurantModel> filteredRestaurants =
-        service.getAllRestaurants(searchQuery);
+    List<RestaurantModel> filteredRestaurants = service.getAllRestaurants(
+      searchQuery,
+    );
 
     switch (selected) {
       case 0: // En yakından en uzağa
         if (userLatitude != 0.0 && userLongitude != 0.0) {
-          filteredRestaurants.sort((a, b) => Geolocator.distanceBetween(
-                  userLatitude, userLongitude, a.latitude, a.longitude)
-              .compareTo(Geolocator.distanceBetween(
-                  userLatitude, userLongitude, b.latitude, b.longitude)));
+          filteredRestaurants.sort(
+            (a, b) =>
+                Geolocator.distanceBetween(
+                  userLatitude,
+                  userLongitude,
+                  a.latitude,
+                  a.longitude,
+                ).compareTo(
+                  Geolocator.distanceBetween(
+                    userLatitude,
+                    userLongitude,
+                    b.latitude,
+                    b.longitude,
+                  ),
+                ),
+          );
         }
         break;
       case 1: // En uzaktan en yakına
         if (userLatitude != 0.0 && userLongitude != 0.0) {
-          filteredRestaurants.sort((a, b) => Geolocator.distanceBetween(
-                  userLatitude, userLongitude, b.latitude, b.longitude)
-              .compareTo(Geolocator.distanceBetween(
-                  userLatitude, userLongitude, a.latitude, a.longitude)));
+          filteredRestaurants.sort(
+            (a, b) =>
+                Geolocator.distanceBetween(
+                  userLatitude,
+                  userLongitude,
+                  b.latitude,
+                  b.longitude,
+                ).compareTo(
+                  Geolocator.distanceBetween(
+                    userLatitude,
+                    userLongitude,
+                    a.latitude,
+                    a.longitude,
+                  ),
+                ),
+          );
         }
         break;
     }
@@ -118,7 +142,8 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
                     decoration: InputDecoration(
                       hintText: "Restoran ara...",
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       filled: true,
                       fillColor: Colors.white,
                       prefixIcon: Icon(Icons.search),
@@ -155,44 +180,9 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
               itemBuilder: (context, index) {
                 final restaurant = filteredRestaurants[index];
 
-                return Card(
-                  color: Colors.white,
-                  elevation: 3,
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: ListTile(
-                    contentPadding: EdgeInsets.all(10),
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        restaurant.image,
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    title: Text(
-                      "${restaurant.name} | ${restaurant.category}",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(restaurant.address),
-                        Text("Çalışma Saatleri: ${restaurant.hours}"),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              MenuPage(restaurant: restaurant),
-                        ),
-                      );
-                    },
-                  ),
+                return Padding(
+                  padding: EdgeInsetsGeometry.symmetric(horizontal: 10),
+                  child: RestaurantCardWidget(restaurant: restaurant),
                 );
               },
             ),

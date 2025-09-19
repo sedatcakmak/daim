@@ -22,12 +22,13 @@ class AccountActivities extends StatelessWidget {
               ),
             )
           : ListView.builder(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.fromLTRB(8, 8, 8, 50),
               itemCount: Information.activities.length,
               itemBuilder: (context, index) {
                 final activity = Information.activities[index];
 
-                final activityStyle = activityStyles[activity.type] ??
+                final activityStyle =
+                    activityStyles[activity.type] ??
                     ActivityStyle(
                       type: "?",
                       icon: Icons.help_outline,
@@ -55,8 +56,9 @@ class AccountActivities extends StatelessWidget {
                         ),
                       ),
                       subtitle: Text(
-                        DateFormat('dd/MM/yyyy HH:mm')
-                            .format(activity.createdAt.toDate()),
+                        DateFormat(
+                          'dd/MM/yyyy HH:mm',
+                        ).format(activity.createdAt.toDate()),
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                       trailing: Text(
@@ -85,9 +87,15 @@ class ActivityStyle {
 }
 
 final Map<String, ActivityStyle> activityStyles = {
-  "earned_stars":
-      ActivityStyle(type: "⭐", icon: Icons.star, color: Colors.green),
+  "earned_stars": ActivityStyle(
+    type: "⭐",
+    icon: Icons.star,
+    color: Colors.green,
+  ),
   "spent_stars": ActivityStyle(type: "⭐", icon: Icons.star, color: Colors.red),
-  "order":
-      ActivityStyle(type: "⭐", icon: Icons.shopping_bag, color: Colors.blue),
+  "order": ActivityStyle(
+    type: "⭐",
+    icon: Icons.shopping_bag,
+    color: Colors.blue,
+  ),
 };

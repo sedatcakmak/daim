@@ -17,12 +17,14 @@ class _LanguageState extends State<Language> {
 
   final List<Map<String, String>> languages = [
     {"name": "Türkçe (TR)", "flag": "🇹🇷", "native": "Türkçe", "code": "tr"},
+    /*
     {
       "name": "İngilizce (UK)",
       "flag": "🇬🇧",
       "native": "English",
       "code": "en"
     },
+    */
   ];
 
   @override
@@ -37,7 +39,7 @@ class _LanguageState extends State<Language> {
     setState(() {
       selectedLanguage =
           languages.firstWhere((lang) => lang["code"] == langCode)["name"] ??
-              "Türkçe (TR)";
+          "Türkçe (TR)";
     });
   }
 
@@ -45,18 +47,21 @@ class _LanguageState extends State<Language> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('language', langCode);
 
-    var languageProvider =
-        Provider.of<LanguageProvider>(context, listen: false);
+    var languageProvider = Provider.of<LanguageProvider>(
+      context,
+      listen: false,
+    );
     await languageProvider.changeLanguage(langCode);
 
     setState(() {
-      selectedLanguage =
-          languages.firstWhere((lang) => lang["code"] == langCode)["name"]!;
+      selectedLanguage = languages.firstWhere(
+        (lang) => lang["code"] == langCode,
+      )["name"]!;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Seçilen Dil: $selectedLanguage")),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text("Seçilen Dil: $selectedLanguage")));
   }
 
   @override
@@ -85,25 +90,32 @@ class _LanguageState extends State<Language> {
                         color: isSelected ? Colors.blue.shade100 : Colors.white,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                            color: isSelected ? Colors.blue : Colors.grey),
+                          color: isSelected ? Colors.blue : Colors.grey,
+                        ),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              Text(language["flag"]!,
-                                  style: TextStyle(fontSize: 24)),
+                              Text(
+                                language["flag"]!,
+                                style: TextStyle(fontSize: 24),
+                              ),
                               SizedBox(width: 12),
-                              Text(language["name"]!,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
+                              Text(
+                                language["name"]!,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ],
                           ),
-                          Text(language["native"]!,
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.grey)),
+                          Text(
+                            language["native"]!,
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
                         ],
                       ),
                     ),

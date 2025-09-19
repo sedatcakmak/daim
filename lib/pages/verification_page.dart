@@ -1,14 +1,18 @@
 import 'dart:async';
+import 'dart:io' show Platform;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daim/managers/auth_manager.dart';
 import 'package:daim/pages/register_page.dart';
 import 'package:daim/pages/type_page.dart';
 import 'package:daim/pages/welcome_page.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
-  final String phone; // ARTIK SADECE TELEFON ALIYORUZ
+  final String phone;
 
   const OTPVerificationScreen({super.key, required this.phone});
 
@@ -26,16 +30,33 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   // SMS/verification state
   String? _verificationId;
-  bool _loading = true; // ekran açılır açılmaz loader
-  String? _errorText; // hata olursa göster
-  int resendCooldown = 30;
+  bool _loading = true;
+  String? _errorText;
+  int resendCooldown = 60;
   bool canResendSMS = false;
   Timer? _timer;
+
+  // Retry & guard
+  int _attempt = 0;
+  final int _maxAttempts = 2;
+  bool _done = false;
+
+  String? _cachedToken;
+  Future<bool> _primeAppCheck() async {
+    try {
+      _cachedToken = await FirebaseAppCheck.instance.getToken(false);
+
+      return true;
+    } catch (_) {
+      return true;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _startVerification(); // EKRAN AÇILDIĞINDA BAŞLAT
+
+    _startVerification();
     _startResendCooldown();
   }
 
@@ -46,7 +67,48 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     super.dispose();
   }
 
-  // --- PHONE VERIFICATION FLOW ---
+  void _markDone() {
+    if (!_done) setState(() => _done = true);
+  }
+
+  String _tail(String s, [int n = 6]) {
+    if (s.isEmpty) return '';
+    return s.length <= n ? s : s.substring(0, n);
+  }
+
+  Future<void> _rlog(String stage, {Map<String, dynamic>? extra}) async {
+    try {
+      final data = <String, dynamic>{
+        'ts': FieldValue.serverTimestamp(),
+        'stage': stage,
+        'phoneMasked': widget.phone,
+        'verificationId': _verificationId,
+        'resendToken': _resendToken,
+        'appCheckTokenLen': _cachedToken?.length ?? 0,
+        'platform': Platform.operatingSystem,
+        'isRelease': kReleaseMode,
+        'pkg': 'com.cakmakstudios.daim',
+        'projectNumber': '1041416288073',
+        if (extra != null) ...extra,
+      };
+      await firestore.collection('otp_debug').add(data);
+    } on FirebaseException catch (e) {
+      debugPrint('RLOG FS ERROR: ${e.code} | ${e.message}');
+      _showSnack('Log yazılamadı: ${e.code}');
+    } catch (e) {
+      debugPrint('RLOG ERROR: $e');
+      _showSnack('Log hatası');
+    }
+  }
+
+  void _showSnack(String msg) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  // ----------------- PHONE VERIFICATION FLOW -----------------
   int? _resendToken;
 
   Future<void> _startVerification() async {
@@ -54,16 +116,35 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       _loading = true;
       _errorText = null;
     });
+    _attempt = 0;
+    await _verify();
+  }
+
+  Future<void> _verify() async {
+    if (_done) return;
+    await _primeAppCheck();
+
+    await _rlog(
+      'verifyPhoneNumber_call',
+      extra: {
+        'attempt': _attempt,
+        'timeoutSec': 120,
+        'forceResendToken': _resendToken,
+      },
+    );
 
     try {
       await auth.verifyPhoneNumber(
         phoneNumber: widget.phone,
-        timeout: const Duration(seconds: 60),
-        forceResendingToken: _resendToken, // <-- kritik
-        verificationCompleted: (PhoneAuthCredential credential) async {
+        timeout: const Duration(seconds: 120),
+        forceResendingToken: _resendToken,
+
+        verificationCompleted: (PhoneAuthCredential cred) async {
+          if (_done) return;
           try {
-            await auth.signInWithCredential(credential);
+            await auth.signInWithCredential(cred);
             if (!mounted) return;
+            _markDone();
             setState(() => _loading = false);
             await _handlePostSignIn();
           } catch (e) {
@@ -72,62 +153,129 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               _errorText = e.toString();
               _loading = false;
             });
+            await _rlog(
+              'verification_completed_failed',
+              extra: {'error': e.toString()},
+            );
           }
         },
-        verificationFailed: (FirebaseAuthException e) {
+
+        verificationFailed: (FirebaseAuthException e) async {
+          await _rlog(
+            'verification_failed',
+            extra: {'code': e.code, 'message': e.message ?? ''},
+          );
+          if (_done) return;
+
+          _attempt++;
+          if (_attempt < _maxAttempts) {
+            await Future.delayed(const Duration(seconds: 2));
+            return _verify(); // tek kanaldan retry
+          }
+
           if (!mounted) return;
           setState(() {
             _errorText = e.message;
             _loading = false;
           });
-          _showSnack('Hata: ${e.message}');
+
+          String userMessage;
+          switch (e.code) {
+            case 'too-many-requests':
+              userMessage =
+                  'Çok fazla deneme yapıldı. Lütfen daha sonra tekrar deneyin.';
+              break;
+            case 'invalid-phone-number':
+              userMessage = 'Geçersiz telefon numarası.';
+              break;
+            default:
+              userMessage = e.message ?? 'Bilinmeyen hata oluştu.';
+          }
+          _showSnack('Hata: $userMessage');
         },
-        codeSent: (String verificationId, int? resendToken) {
-          if (!mounted) return;
+
+        codeSent: (String verificationId, int? resendToken) async {
+          if (!mounted || _done) return;
           setState(() {
             _verificationId = verificationId;
             _resendToken = resendToken;
             _loading = false;
           });
+
+          await _rlog(
+            'code_sent',
+            extra: {
+              'verificationId_tail': _tail(verificationId),
+              'resendToken': resendToken,
+            },
+          );
           _showSnack('Doğrulama kodu gönderildi.');
         },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          if (!mounted) return;
-          // Süre dolsa da elde verificationId kalsın
+
+        codeAutoRetrievalTimeout: (String verificationId) async {
+          if (!mounted || _done) return;
           setState(() => _verificationId = verificationId);
+          await _rlog(
+            'auto_retrieval_timeout',
+            extra: {'verificationId_tail': _tail(verificationId)},
+          );
+          // İstersen burada sınırlı sayıda yeniden deneyebilirsin
         },
       );
     } catch (e) {
+      await _rlog('verify_call_throw', extra: {'error': e.toString()});
       if (!mounted) return;
       setState(() {
         _errorText = e.toString();
         _loading = false;
       });
-      _showSnack('Hata: $e');
     }
   }
 
   Future<void> _verifyOTP() async {
+    if (_done) return;
+
     if (_verificationId == null) {
       _showSnack('Kod henüz gelmedi, lütfen bekleyin.');
       return;
     }
+
     try {
       final credential = PhoneAuthProvider.credential(
         verificationId: _verificationId!,
         smsCode: otpController.text,
       );
-      final userCredential = await auth.signInWithCredential(credential);
-      final user = userCredential.user;
 
-      if (user == null) {
+      final current = auth.currentUser;
+      UserCredential userCredential;
+
+      if (current != null) {
+        try {
+          userCredential = await current.linkWithCredential(credential);
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'provider-already-linked' ||
+              e.code == 'credential-already-in-use') {
+            userCredential = await auth.signInWithCredential(credential);
+            await _rlog('otp_signin_fallback');
+          } else {
+            rethrow;
+          }
+        }
+      } else {
+        userCredential = await auth.signInWithCredential(credential);
+      }
+
+      if (userCredential.user == null) {
+        await _rlog('otp_user_null');
         _showSnack('HATA!');
         return;
       }
 
+      _markDone();
       await _handlePostSignIn();
     } catch (e) {
-      final msg = e.toString().contains('invalid')
+      await _rlog('verify_otp_failed', extra: {'error': e.toString()});
+      final msg = e.toString().toLowerCase().contains('invalid')
           ? 'Yanlış kod girildi!'
           : e.toString();
       _showSnack('Hata: $msg');
@@ -135,46 +283,76 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   }
 
   Future<void> _handlePostSignIn() async {
-    final user = auth.currentUser;
-    if (user == null) return;
+    try {
+      final user = auth.currentUser;
+      if (user == null) return;
 
-    final employeeDoc =
-        await firestore.collection('employees').doc(user.uid).get();
-    final userDoc = await firestore.collection('users').doc(user.uid).get();
+      final phone = user.phoneNumber ?? widget.phone;
+      if (phone.isEmpty) {
+        _showSnack('Telefon numarası bulunamadı.');
+        return;
+      }
 
-    if (!mounted) return;
-    if (employeeDoc.exists && userDoc.exists) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (_) => TypePage(userId: user.uid, phone: widget.phone),
-        ),
-        (route) => false,
-      );
-    } else if (employeeDoc.exists || userDoc.exists) {
-      _authManager.login(context, user.uid, widget.phone, employeeDoc.exists);
-    } else {
+      final employeeSnap = await firestore
+          .collection('employees')
+          .where('phone', isEqualTo: phone)
+          .limit(1)
+          .get();
+
+      final userSnap = await firestore
+          .collection('users')
+          .where('phone', isEqualTo: phone)
+          .limit(1)
+          .get();
+
+      final hasEmployee = employeeSnap.docs.isNotEmpty;
+      final hasUser = userSnap.docs.isNotEmpty;
+
+      if (!mounted) return;
+
+      if (hasEmployee && hasUser) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => TypePage(userId: user.uid, phone: phone),
+          ),
+          (route) => false,
+        );
+        return;
+      }
+
+      if (hasEmployee || hasUser) {
+        _authManager.login(context, user.uid, phone, hasEmployee);
+        return;
+      }
+
       _showSnack('Başarıyla doğruladın!');
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => RegistrationScreen(id: user.uid, phone: widget.phone),
+          builder: (_) => RegistrationScreen(id: user.uid, phone: phone),
         ),
       );
+    } catch (e) {
+      _showSnack('Giriş tamamlanamadı: $e');
     }
   }
 
   Future<void> _resendOTP() async {
-    if (!canResendSMS) return;
-    _startResendCooldown(); // cooldown reset
-    await _startVerification(); // yeniden başlatır; _verificationId güncellenir
+    if (!canResendSMS || _done) return;
+    _startResendCooldown();
+    setState(() {
+      _loading = true;
+      _errorText = null;
+    });
+    await _verify();
   }
 
   void _startResendCooldown() {
     _timer?.cancel();
     setState(() {
       canResendSMS = false;
-      resendCooldown = 30;
+      resendCooldown = 60;
     });
 
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
@@ -194,17 +372,11 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     setState(() => isButtonEnabled = v.length == 6);
   }
 
-  void _showSnack(String msg) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context)
-      ..clearSnackBars()
-      ..showSnackBar(SnackBar(content: Text(msg)));
-  }
-
-  // --- UI ---
-
+  // ----------------- UI -----------------
   @override
   Widget build(BuildContext context) {
+    final enabled = !_loading && _verificationId != null && isButtonEnabled;
+
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
@@ -212,8 +384,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         elevation: 0,
-        title: const Text('Hesap Doğrulama',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Hesap Doğrulama',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SafeArea(
@@ -225,8 +399,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               const SizedBox(height: 20),
               Image.asset('assets/logo.png', width: 200, height: 200),
               const SizedBox(height: 10),
-              const Text('Daim',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+              const Text(
+                'Daim',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 10),
               Text(
                 '${widget.phone} numarasına gönderilen kodu girin.',
@@ -235,7 +411,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               ),
               const SizedBox(height: 20),
 
-              // LOADER / ERROR / OTP INPUT
               if (_loading)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 24),
@@ -244,8 +419,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               else if (_errorText != null)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Text('Hata: $_errorText',
-                      style: const TextStyle(color: Colors.red)),
+                  child: Text(
+                    'Hata: $_errorText',
+                    style: const TextStyle(color: Colors.red),
+                  ),
                 )
               else
                 SizedBox(
@@ -257,7 +434,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     onChanged: _onOTPChanged,
                     textInputAction: TextInputAction.done,
                     onSubmitted: (_) {
-                      if (isButtonEnabled) _verifyOTP();
+                      if (enabled) _verifyOTP();
                     },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
@@ -266,9 +443,31 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     scrollPadding: const EdgeInsets.only(bottom: 200),
                   ),
                 ),
+
               const SizedBox(height: 20),
-              _buildVerifyButton(),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: enabled ? _verifyOTP : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: enabled ? Colors.green : Colors.grey,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    'Doğrula',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 20),
+
               TextButton(
                 onPressed: canResendSMS ? _resendOTP : null,
                 child: Text(
@@ -286,38 +485,20 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => const PhoneNumberScreen()),
+                      builder: (_) => const PhoneNumberScreen(),
+                    ),
                     (route) => false,
                   );
                 },
-                child: const Text('Telefon Numarasını Değiştir',
-                    style: TextStyle(fontSize: 16, color: Colors.blue)),
+                child: const Text(
+                  'Telefon Numarasını Değiştir',
+                  style: TextStyle(fontSize: 16, color: Colors.blue),
+                ),
               ),
               const SizedBox(height: 40),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildVerifyButton() {
-    final enabled = !_loading && _verificationId != null && isButtonEnabled;
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: enabled ? _verifyOTP : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: enabled ? Colors.green : Colors.grey,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        child: const Text('Doğrula',
-            style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
       ),
     );
   }

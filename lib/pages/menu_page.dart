@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:daim/models/information.dart';
 import 'package:daim/models/star_model.dart';
 import 'package:flutter/material.dart';
@@ -25,13 +27,14 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    wallet = Information.wallets
-        .firstWhere((element) => element.restaurantId == widget.restaurant.id,
-            orElse: () => StarModel(
-                  restaurantId: widget.restaurant.id,
-                  totalAmount: 0,
-                  currentAmount: 0,
-                ));
+    wallet = Information.wallets.firstWhere(
+      (element) => element.restaurantId == widget.restaurant.id,
+      orElse: () => StarModel(
+        restaurantId: widget.restaurant.id,
+        totalAmount: 0,
+        currentAmount: 0,
+      ),
+    );
 
     Map<String, List<MenuItemModel>> categorizedItems = {};
     for (var item in widget.restaurant.menu) {
@@ -49,7 +52,6 @@ class _MenuPageState extends State<MenuPage> {
       body: Column(
         children: [
           _buildRestaurantInfoCard(), // 🌟 En üste restoran bilgileri geldi
-
           // 🔎 Ürün Arama Alanı
           Padding(
             padding: EdgeInsets.all(8),
@@ -57,8 +59,9 @@ class _MenuPageState extends State<MenuPage> {
               controller: searchController,
               decoration: InputDecoration(
                 hintText: "Ürün ara...",
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 filled: true,
                 fillColor: Colors.white,
                 prefixIcon: Icon(Icons.search),
@@ -85,7 +88,8 @@ class _MenuPageState extends State<MenuPage> {
           Expanded(
             child: ListView(
               padding: EdgeInsets.only(
-                bottom: kFloatingActionButtonMargin +
+                bottom:
+                    kFloatingActionButtonMargin +
                     56 +
                     MediaQuery.of(context).padding.bottom,
               ),
@@ -113,10 +117,8 @@ class _MenuPageState extends State<MenuPage> {
                 bool? updated = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => OrderPage(
-                      restaurant: widget.restaurant,
-                      order: _order,
-                    ),
+                    builder: (context) =>
+                        OrderPage(restaurant: widget.restaurant, order: _order),
                   ),
                 );
 
@@ -139,10 +141,7 @@ class _MenuPageState extends State<MenuPage> {
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                 ),
-                constraints: BoxConstraints(
-                  minWidth: 20,
-                  minHeight: 20,
-                ),
+                constraints: BoxConstraints(minWidth: 20, minHeight: 20),
                 child: Text(
                   _order.values.fold(0, (sum, item) => sum + item).toString(),
                   style: TextStyle(
@@ -232,8 +231,10 @@ class _MenuPageState extends State<MenuPage> {
                   children: [
                     Text(
                       "${item.price} ⭐",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -241,9 +242,11 @@ class _MenuPageState extends State<MenuPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildQuantityButton(Icons.remove,
-                        () => quantity > 0 ? _removeItem(item) : null,
-                        isEnabled: quantity > 0),
+                    _buildQuantityButton(
+                      Icons.remove,
+                      () => quantity > 0 ? _removeItem(item) : null,
+                      isEnabled: quantity > 0,
+                    ),
                     Text("$quantity", style: TextStyle(fontSize: 16)),
                     _buildQuantityButton(Icons.add, () {
                       if (!canAddMore) {
@@ -267,9 +270,11 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  /// 📌 Small Quantity Adjustment Buttons
-  Widget _buildQuantityButton(IconData icon, VoidCallback? onPressed,
-      {bool isEnabled = true}) {
+  Widget _buildQuantityButton(
+    IconData icon,
+    VoidCallback? onPressed, {
+    bool isEnabled = true,
+  }) {
     return IconButton(
       icon: Icon(icon, size: 32, color: isEnabled ? Colors.blue : Colors.grey),
       onPressed: onPressed,
@@ -278,12 +283,11 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  /// 📌 Hata Mesajı Gösterme Fonksiyonu
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _addItem(MenuItemModel item) {
@@ -321,24 +325,10 @@ class _MenuPageState extends State<MenuPage> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.location_on, size: 18, color: Colors.grey),
-                    SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        widget.restaurant.address,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 6),
-                Row(
-                  children: [
                     Icon(Icons.access_time, size: 18, color: Colors.grey),
                     SizedBox(width: 6),
                     Text(
-                      widget.restaurant.hours,
+                      "Çalışma Saatleri: ${widget.restaurant.hours}",
                       style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                     ),
                   ],
@@ -346,15 +336,16 @@ class _MenuPageState extends State<MenuPage> {
                 SizedBox(height: 6),
                 GestureDetector(
                   onTap: () async {
-                    final Uri uri = Uri.parse("https://google.com");
+                    final Uri uri = Uri.parse(widget.restaurant.link);
 
                     if (await canLaunchUrl(uri)) {
                       await launchUrl(
                         uri,
-                        mode: LaunchMode
-                            .externalApplication, // 🌟 dış tarayıcıda aç
+                        mode: LaunchMode.externalApplication,
                       );
                     } else {
+                      if (!mounted) return;
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Bağlantı açılamadı")),
                       );
@@ -365,10 +356,67 @@ class _MenuPageState extends State<MenuPage> {
                       Icon(Icons.link, size: 18, color: Colors.blue),
                       SizedBox(width: 6),
                       Text(
-                        "Restoranın Menüsünü Görüntüle",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 14,
+                        "İşletme Menüsünü Görüntüle",
+                        style: TextStyle(color: Colors.blue, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 6),
+                GestureDetector(
+                  onTap: () async {
+                    final latitude = widget.restaurant.latitude;
+                    final longitude = widget.restaurant.longitude;
+
+                    final googleUrl =
+                        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+                    final appleUrl =
+                        'http://maps.apple.com/?ll=$latitude,$longitude';
+
+                    if (Platform.isAndroid) {
+                      final Uri geoUri = Uri.parse(
+                        'geo:$latitude,$longitude?q=$latitude,$longitude',
+                      );
+                      if (await canLaunchUrl(geoUri)) {
+                        await launchUrl(
+                          geoUri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                        return;
+                      }
+                    }
+
+                    if (Platform.isIOS) {
+                      final Uri appleUri = Uri.parse(appleUrl);
+                      if (await canLaunchUrl(appleUri)) {
+                        await launchUrl(
+                          appleUri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                        return;
+                      }
+                    }
+
+                    final Uri googleUri = Uri.parse(googleUrl);
+                    if (await canLaunchUrl(googleUri)) {
+                      await launchUrl(
+                        googleUri,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    }
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.location_on, size: 18, color: Colors.blue),
+                      SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          widget.restaurant.address,
+                          style: TextStyle(color: Colors.blue, fontSize: 14),
+                          softWrap: true,
+                          overflow: TextOverflow.visible,
+                          maxLines: null,
                         ),
                       ),
                     ],
@@ -377,7 +425,18 @@ class _MenuPageState extends State<MenuPage> {
                 SizedBox(height: 18),
                 Row(
                   children: [
-                    Icon(Icons.star, size: 18, color: Colors.grey),
+                    Icon(Icons.money, size: 18, color: Colors.grey),
+                    SizedBox(width: 6),
+                    Text(
+                      "Her siparişten ${widget.restaurant.stars} ⭐ kazanırsın.",
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 6),
+                Row(
+                  children: [
+                    Icon(Icons.star_half, size: 18, color: Colors.grey),
                     SizedBox(width: 6),
                     Text(
                       "Harcanabilen Yıldız: ${wallet.currentAmount} ⭐",
