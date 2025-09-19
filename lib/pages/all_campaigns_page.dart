@@ -29,6 +29,7 @@ class _CampaignListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: Information.campaigns.length,
+      padding: EdgeInsets.fromLTRB(12, 12, 12, 50),
       itemBuilder: (context, index) {
         CampaignModel campaign = Information.campaigns[index];
 
@@ -47,7 +48,7 @@ class _CampaignListView extends StatelessWidget {
             ),
             elevation: 5,
             color: Colors.white,
-            margin: const EdgeInsets.symmetric(vertical: 8),
+            margin: const EdgeInsets.symmetric(vertical: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -80,10 +81,7 @@ class _CampaignListView extends StatelessWidget {
                         campaign.description,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[700],
-                        ),
+                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                       ),
                     ],
                   ),

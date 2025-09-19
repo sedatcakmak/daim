@@ -21,7 +21,6 @@ class _TypePageState extends State<TypePage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Center(
-          // 👈 Ortalamak için Center eklendi
           child: Column(
             mainAxisSize: MainAxisSize.min, // 👈 İçerikleri sıkıştırır
             children: [
@@ -33,7 +32,11 @@ class _TypePageState extends State<TypePage> {
                 color: Colors.blueAccent,
                 onTap: () async {
                   _authManager.login(
-                      context, widget.userId, widget.phone, false);
+                    context,
+                    widget.userId,
+                    widget.phone,
+                    false,
+                  );
                 },
               ),
               const SizedBox(height: 20),
@@ -45,7 +48,11 @@ class _TypePageState extends State<TypePage> {
                 color: Colors.green,
                 onTap: () async {
                   _authManager.login(
-                      context, widget.userId, widget.phone, true);
+                    context,
+                    widget.userId,
+                    widget.phone,
+                    true,
+                  );
                 },
               ),
             ],
@@ -82,13 +89,18 @@ class _TypePageState extends State<TypePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title,
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 6),
-                    Text(description,
-                        style:
-                            const TextStyle(fontSize: 14, color: Colors.grey)),
+                    Text(
+                      description,
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
                   ],
                 ),
               ),

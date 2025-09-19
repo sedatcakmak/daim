@@ -27,16 +27,20 @@ class _OrderPageState extends State<OrderPage> {
   void _addItem(MenuItemModel item) {
     setState(() {
       int currentQuantity = widget.order[item] ?? 0;
-      int totalPrice = widget.order.entries
-          .fold(0, (int sum, entry) => sum + (entry.key.price * entry.value));
+      int totalPrice = widget.order.entries.fold(
+        0,
+        (int sum, entry) => sum + (entry.key.price * entry.value),
+      );
 
       int userBalance = Information.wallets
-          .firstWhere((star) => star.restaurantId == widget.restaurant.id,
-              orElse: () => StarModel(
-                    restaurantId: widget.restaurant.id,
-                    totalAmount: 0,
-                    currentAmount: 0,
-                  ))
+          .firstWhere(
+            (star) => star.restaurantId == widget.restaurant.id,
+            orElse: () => StarModel(
+              restaurantId: widget.restaurant.id,
+              totalAmount: 0,
+              currentAmount: 0,
+            ),
+          )
           .currentAmount;
 
       if (item.price > 0) {
@@ -101,7 +105,7 @@ class _OrderPageState extends State<OrderPage> {
                 final entry = widget.order.entries.elementAt(index);
                 final item = entry.key;
                 final quantity = entry.value;
-                final total = (item.price * quantity).toStringAsFixed(2);
+                final total = (item.price * quantity);
                 final bool canAddMore = quantity < item.maximum;
 
                 return Card(
@@ -109,7 +113,8 @@ class _OrderPageState extends State<OrderPage> {
                   elevation: 3,
                   margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                     child: Row(
@@ -129,19 +134,27 @@ class _OrderPageState extends State<OrderPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(item.name,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              Text(item.description,
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.grey)),
+                              Text(
+                                item.name,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                item.description,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
                               SizedBox(height: 6),
                               Text(
                                 "Toplam Ücret: $total ⭐",
                                 style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                ),
                               ),
                             ],
                           ),
@@ -153,30 +166,40 @@ class _OrderPageState extends State<OrderPage> {
                             Text(
                               "${item.price} ⭐",
                               style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.normal),
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.remove,
-                                      size: 22,
-                                      color: quantity > 0
-                                          ? Colors.blue
-                                          : Colors.grey),
+                                  icon: Icon(
+                                    Icons.remove,
+                                    size: 22,
+                                    color: quantity > 0
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
                                   onPressed: () => _removeItem(item),
                                 ),
-                                Text("$quantity",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
+                                Text(
+                                  "$quantity",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 IconButton(
-                                  icon: Icon(Icons.add,
-                                      color: canAddMore
-                                          ? Colors.blue
-                                          : Colors.grey),
-                                  onPressed:
-                                      canAddMore ? () => _addItem(item) : null,
+                                  icon: Icon(
+                                    Icons.add,
+                                    color: canAddMore
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
+                                  onPressed: canAddMore
+                                      ? () => _addItem(item)
+                                      : null,
                                 ),
                               ],
                             ),
@@ -205,10 +228,13 @@ class _OrderPageState extends State<OrderPage> {
                           try {
                             List<OrderItemModel> items = [];
                             widget.order.forEach((menuItem, amount) {
-                              items.add(OrderItemModel(
+                              items.add(
+                                OrderItemModel(
                                   id: menuItem.id,
                                   unitPrice: menuItem.price,
-                                  amount: amount));
+                                  amount: amount,
+                                ),
+                              );
                             });
 
                             OrderModel orderModel = OrderModel(
@@ -219,8 +245,9 @@ class _OrderPageState extends State<OrderPage> {
                               items: items,
                             );
 
-                            String number =
-                                await AppLoader.createPendingOrder(orderModel);
+                            String number = await AppLoader.createPendingOrder(
+                              orderModel,
+                            );
 
                             if (!mounted) return;
 
@@ -237,8 +264,8 @@ class _OrderPageState extends State<OrderPage> {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                  content:
-                                      Text("Sipariş başarıyla oluşturuldu!")),
+                                content: Text("Sipariş başarıyla oluşturuldu!"),
+                              ),
                             );
 
                             setState(() {
@@ -247,7 +274,8 @@ class _OrderPageState extends State<OrderPage> {
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                  content: Text("Sipariş oluşturulamadı: $e")),
+                                content: Text("Sipariş oluşturulamadı: $e"),
+                              ),
                             );
                           } finally {
                             setState(() {

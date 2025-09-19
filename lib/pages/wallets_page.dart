@@ -29,7 +29,7 @@ class WalletsPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => QR()),
+                  MaterialPageRoute(builder: (context) => QRPage()),
                 );
               },
             ),
@@ -66,8 +66,10 @@ class WalletsPage extends StatelessWidget {
             Information.wallets.isEmpty
                 ? Text(
                     "Hiçbir kafede daha yıldız kazanmamışsın.",
-                    style:
-                        TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                    ),
                   )
                 : Expanded(
                     child: ListView.builder(
@@ -81,7 +83,8 @@ class WalletsPage extends StatelessWidget {
                         return Card(
                           margin: EdgeInsets.symmetric(vertical: 8),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           elevation: 2,
                           color: Colors.white,
                           child: ListTile(
@@ -95,8 +98,11 @@ class WalletsPage extends StatelessWidget {
                                       fit: BoxFit.cover,
                                     ),
                                   )
-                                : Icon(Icons.storefront,
-                                    size: 50, color: Colors.grey),
+                                : Icon(
+                                    Icons.storefront,
+                                    size: 50,
+                                    color: Colors.grey,
+                                  ),
                             title: Text(
                               restaurant.name,
                               style: TextStyle(fontWeight: FontWeight.bold),
@@ -107,8 +113,9 @@ class WalletsPage extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        MenuPage(restaurant: restaurant)),
+                                  builder: (context) =>
+                                      MenuPage(restaurant: restaurant),
+                                ),
                               );
                             },
                           ),
@@ -137,8 +144,10 @@ class WalletsPage extends StatelessWidget {
         onTap: onTap, // ✅ Tıklama olayı
         leading: Icon(icon, color: Color(0xFF1098F7), size: 50),
         title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(description,
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade700)),
+        subtitle: Text(
+          description,
+          style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+        ),
         trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.black),
       ),
     );

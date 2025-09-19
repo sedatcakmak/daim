@@ -32,9 +32,7 @@ class _CampaignsWidgetState extends State<CampaignsWidget> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => CampaignListPage(),
-                    ),
+                    MaterialPageRoute(builder: (context) => CampaignListPage()),
                   );
                 },
                 child: Row(
@@ -108,10 +106,7 @@ class _CampaignsWidgetState extends State<CampaignsWidget> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(9),
-            child: Image.network(
-              campaign.image,
-              fit: BoxFit.cover,
-            ),
+            child: Image.network(campaign.image, fit: BoxFit.cover),
           ),
         ),
       ),

@@ -25,11 +25,15 @@ class AuthManager {
   }
 
   Future<void> login(
-      BuildContext context, String id, String phone, bool isEmployee) async {
+    BuildContext context,
+    String id,
+    String phone,
+    bool isEmployee,
+  ) async {
     if (isEmployee) {
-      await AppLoader.loadEmployeeData(id);
+      await AppLoader.loadEmployeeData(phone);
     } else {
-      await AppLoader.loadAllData(id);
+      await AppLoader.loadAllData(phone);
     }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -37,13 +41,15 @@ class AuthManager {
     await prefs.setBool('employee', isEmployee);
 
     if (context.mounted) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Başarıyla giriş yaptın!")));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Başarıyla giriş yaptın!")));
 
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-            builder: (context) => isEmployee ? EmployeeHomePage() : HomePage()),
+          builder: (context) => isEmployee ? EmployeeHomePage() : HomePage(),
+        ),
         (Route<dynamic> route) => false,
       );
     }

@@ -4,20 +4,20 @@ import 'package:daim/widgets/restaurant_card.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class RecommendedRestaurantsWidget extends StatefulWidget {
-  const RecommendedRestaurantsWidget({super.key});
+class NewRestaurantsWidget extends StatefulWidget {
+  const NewRestaurantsWidget({super.key});
 
   @override
-  State<StatefulWidget> createState() => _RecommendedRestaurantState();
+  State<StatefulWidget> createState() => _NewRestaurantState();
 }
 
-class _RecommendedRestaurantState extends State<RecommendedRestaurantsWidget> {
+class _NewRestaurantState extends State<NewRestaurantsWidget> {
   final PageController _controller = PageController(viewportFraction: 0.92);
 
   final restaurants = Information.restaurants
       .where(
         (r) =>
-            r.isRecommended &&
+            r.isNew &&
             r.address.toLowerCase().contains(Information.city.toLowerCase()),
       )
       .toList();
@@ -43,7 +43,7 @@ class _RecommendedRestaurantState extends State<RecommendedRestaurantsWidget> {
           child: Row(
             children: [
               const Text(
-                "Önerilen İşletmeler",
+                "Yeni İşletmeler",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const Spacer(),

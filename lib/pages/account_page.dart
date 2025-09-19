@@ -1,3 +1,4 @@
+import 'package:daim/models/app_loader.dart';
 import 'package:daim/pages/activites_page.dart';
 import 'package:daim/pages/contact_us_page.dart';
 import 'package:daim/pages/faq_page.dart';
@@ -38,8 +39,10 @@ class AccountInformation extends StatelessWidget {
                   SizedBox(height: 5),
                   Text(
                     "Promosyon kodun bulunuyorsa burada kullanabilirsin.",
-                    style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 15,
+                    ),
                   ),
                   SizedBox(height: 15),
                   Row(
@@ -69,14 +72,14 @@ class AccountInformation extends StatelessWidget {
                           padding: EdgeInsets.all(16),
                         ),
                         onPressed: () async {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Kod geçersiz!")),
-                          );
+                          await AppLoader.useCode(context, codeController.text);
                         },
                         child: Text(
                           'Onayla',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],

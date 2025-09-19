@@ -1,6 +1,8 @@
+import 'package:daim/models/manager.dart';
 import 'package:daim/models/order_model.dart';
 import 'package:daim/models/restaurant_model.dart';
 import 'package:daim/pages/order_details.dart';
+import 'package:daim/pages/order_review_page.dart';
 import 'package:flutter/material.dart';
 
 class LastOrderCard extends StatelessWidget {
@@ -43,7 +45,9 @@ class LastOrderCard extends StatelessWidget {
                 Text(
                   restaurantModel.name,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   "${_formatDate(orderModel.createdAt.toDate())} - ${orderModel.price} ⭐",
@@ -51,9 +55,7 @@ class LastOrderCard extends StatelessWidget {
                 ),
                 Text(
                   "${orderModel.items.length} ürün siparişi",
-                  style: TextStyle(
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(fontSize: 14),
                 ),
               ],
             ),
@@ -68,6 +70,22 @@ class LastOrderCard extends StatelessWidget {
                     builder: (context) => OrderDetailsPage(order: orderModel),
                   ),
                 );
+              }),
+              SizedBox(height: 7),
+              _buildButton("Değerlendir", Colors.orange, () async {
+                if (await Manager.isReviewed(
+                  restaurantId: restaurantModel.id,
+                  orderId: orderModel.id,
+                )) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Zaten bu siparişi değerlendirmişsin!"),
+                    ),
+                  );
+                  return;
+                }
+
+                showOrderReviewPopup(context, orderModel);
               }),
             ],
           ),
@@ -89,7 +107,10 @@ class LastOrderCard extends StatelessWidget {
         child: Text(
           text,
           style: TextStyle(
-              fontSize: 14, fontWeight: FontWeight.bold, color: color),
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
         ),
       ),
     );

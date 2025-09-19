@@ -14,37 +14,37 @@ class _FAQState extends State<FAQ> {
     {
       "question": "Yıldız nasıl kazanılır?",
       "answer":
-          "Kasanın yanında duran cihazdaki QR kodu okutarak veya çalışanın kendi uygulamasından göstereceği QR kodu okutarak yıldız kazanabilirsiniz."
+          "Kasanın yanında duran cihazdaki QR kodu okutarak veya çalışanın kendi uygulamasından göstereceği QR kodu okutarak yıldız kazanabilirsiniz.",
     },
     {
       "question": "Yıldız nasıl harcanır?",
       "answer":
-          "Uygulama üzerinden yıldızlarınızı harcamak için sipariş QR'ını okutabilir veya hesabınızın QR kodunu çalışana göstererek hesabınızdaki yıldızı kullandırabilirsiniz."
+          "Uygulama üzerinden yıldızlarınızı harcamak için sipariş QR'ını okutabilir veya hesabınızın QR kodunu çalışana göstererek hesabınızdaki yıldızı kullandırabilirsiniz.",
     },
     {
       "question": "Hesap QR kodu ne işe yarar?",
       "answer":
-          "Hesap QR kodunuzu çalışana göstererek hesabınızdaki yıldız miktarını arttırabilir veya azaltabilirsiniz."
+          "Hesap QR kodunuzu çalışana göstererek hesabınızdaki yıldız miktarını arttırabilir veya azaltabilirsiniz.",
     },
     {
       "question": "Kampanyalar nasıl görüntülenir?",
       "answer":
-          "Uygulamanın 'Kampanyalar' bölümünden tüm güncel kampanyaları ve yıldız karşılıklarını görebilirsiniz."
+          "Uygulamanın 'Kampanyalar' bölümünden tüm güncel kampanyaları ve yıldız karşılıklarını görebilirsiniz.",
     },
     {
       "question": "Yıldızlarım ne kadar süre geçerli?",
-      "answer": "Kazanılan yıldızlar hesabınızda süresiz şekilde kalır."
+      "answer": "Kazanılan yıldızlar hesabınızda süresiz şekilde kalır.",
     },
     {
       "question": "Uygulamayı nereden indirebilirim?",
       "answer":
-          "Uygulamamız App Store ve Google Play üzerinden ücretsiz olarak indirilebilir."
+          "Uygulamamız App Store ve Google Play üzerinden ücretsiz olarak indirilebilir.",
     },
     {
       "question": "QR kodum çalışmıyor, ne yapmalıyım?",
       "answer":
-          "Telefon kamerasını ve internet bağlantınızı kontrol edin. Sorun devam ederse uygulama içinden 'Destek' bölümünden bize ulaşabilirsiniz."
-    }
+          "Telefon kamerasını ve internet bağlantınızı kontrol edin. Sorun devam ederse uygulama içinden 'Destek' bölümünden bize ulaşabilirsiniz.",
+    },
   ];
 
   List<bool> isExpandedList = [];
@@ -90,7 +90,9 @@ class _FAQState extends State<FAQ> {
                             child: Text(
                               faqList[index]["question"]!,
                               style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           Icon(
@@ -98,14 +100,14 @@ class _FAQState extends State<FAQ> {
                                 ? Icons.keyboard_arrow_up
                                 : Icons.keyboard_arrow_down,
                             color: Colors.blue,
-                          )
+                          ),
                         ],
                       ),
                       if (isExpandedList[index]) ...[
                         SizedBox(height: 8),
                         Text(
                           faqList[index]["answer"]!,
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          style: TextStyle(fontSize: 14, color: Colors.black54),
                         ),
                       ],
                     ],

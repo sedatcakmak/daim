@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daim/managers/auth_manager.dart';
 import 'package:daim/models/manager.dart';
@@ -18,132 +16,33 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController surnameController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
+  final TextEditingController cityController =
+      TextEditingController(); // gösterim için (readOnly)
+  final AuthManager _authManager = AuthManager();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+
   bool isButtonEnabled = false;
   String? selectedCity;
-  List<String> filteredCities = [];
-  final AuthManager _authManager = AuthManager();
 
-  final List<String> cities = [
-    "Adana",
-    "Adıyaman",
-    "Afyonkarahisar",
-    "Ağrı",
-    "Amasya",
-    "Ankara",
-    "Antalya",
-    "Artvin",
-    "Aydın",
-    "Balıkesir",
-    "Bilecik",
-    "Bingöl",
-    "Bitlis",
-    "Bolu",
-    "Burdur",
-    "Bursa",
-    "Çanakkale",
-    "Çankırı",
-    "Çorum",
-    "Denizli",
-    "Diyarbakır",
-    "Edirne",
-    "Elazığ",
-    "Erzincan",
-    "Erzurum",
-    "Eskişehir",
-    "Gaziantep",
-    "Giresun",
-    "Gümüşhane",
-    "Hakkari",
-    "Hatay",
-    "Isparta",
-    "Mersin",
-    "İstanbul",
-    "İzmir",
-    "Kars",
-    "Kastamonu",
-    "Kayseri",
-    "Kırklareli",
-    "Kırşehir",
-    "Kocaeli",
-    "Konya",
-    "Kütahya",
-    "Malatya",
-    "Manisa",
-    "Kahramanmaraş",
-    "Mardin",
-    "Muğla",
-    "Muş",
-    "Nevşehir",
-    "Niğde",
-    "Ordu",
-    "Rize",
-    "Sakarya",
-    "Samsun",
-    "Siirt",
-    "Sinop",
-    "Sivas",
-    "Tekirdağ",
-    "Tokat",
-    "Trabzon",
-    "Tunceli",
-    "Şanlıurfa",
-    "Uşak",
-    "Van",
-    "Yozgat",
-    "Zonguldak",
-    "Aksaray",
-    "Bayburt",
-    "Karaman",
-    "Kırıkkale",
-    "Batman",
-    "Şırnak",
-    "Bartın",
-    "Ardahan",
-    "Iğdır",
-    "Yalova",
-    "Karabük",
-    "Kilis",
-    "Osmaniye",
-    "Düzce"
-  ];
+  // Örnek şehir listesi (kendi listenle değiştir)
+  final List<String> cities = <String>["Kayseri"];
 
   void completeRegistration() async {
-    String id = await Manager.createUser(nameController.text,
-        surnameController.text, widget.phone, selectedCity ?? "");
-
+    final String id = await Manager.createUser(
+      nameController.text.trim(),
+      surnameController.text.trim(),
+      widget.phone,
+      selectedCity ?? "",
+    );
     _authManager.login(context, id, widget.phone, false);
   }
 
-  void _onTextChanged() {
+  void _recheckButton() {
     setState(() {
-      isButtonEnabled = nameController.text.trim().isNotEmpty &&
+      isButtonEnabled =
+          nameController.text.trim().isNotEmpty &&
           surnameController.text.trim().isNotEmpty &&
-          selectedCity != null;
-    });
-  }
-
-  void _onCityChanged(String input) {
-    setState(() {
-      if (input.isEmpty) {
-        filteredCities = [];
-      } else {
-        filteredCities = cities
-            .where((city) => city.toLowerCase().contains(input.toLowerCase()))
-            .toList();
-
-        if (filteredCities.isNotEmpty) {
-          String? city = cities
-              .where((city) => city.toLowerCase() == input.toLowerCase())
-              .firstOrNull;
-
-          if (city != null) {
-            selectedCity = city;
-            _onTextChanged();
-          }
-        }
-      }
+          (selectedCity != null && selectedCity!.isNotEmpty);
     });
   }
 
@@ -151,19 +50,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     setState(() {
       selectedCity = null;
       cityController.clear();
-      filteredCities = [];
-      _onTextChanged();
+      _recheckButton();
     });
   }
 
   @override
   void initState() {
     super.initState();
-    nameController.addListener(_onTextChanged);
-    surnameController.addListener(_onTextChanged);
-    cityController.addListener(() {
-      _onCityChanged(cityController.text);
-    });
+    nameController.addListener(_recheckButton);
+    surnameController.addListener(_recheckButton);
   }
 
   @override
@@ -174,19 +69,104 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     super.dispose();
   }
 
+  Future<void> _openCityPicker() async {
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        List<String> filtered = List.from(cities);
+
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            void applyFilter(String q) {
+              setSheetState(() {
+                final qLower = q.toLowerCase();
+                filtered = q.isEmpty
+                    ? List.from(cities)
+                    : cities
+                          .where((c) => c.toLowerCase().contains(qLower))
+                          .toList();
+              });
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                top: 12,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 36,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.black26,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  TextField(
+                    autofocus: true,
+                    onChanged: applyFilter,
+                    decoration: InputDecoration(
+                      labelText: "Şehir ara",
+                      prefixIcon: const Icon(Icons.search),
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Kaydırılabilir liste:
+                  Flexible(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: filtered.length,
+                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final city = filtered[index];
+                        return ListTile(
+                          title: Text(city),
+                          onTap: () => Navigator.pop(context, city),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (result != null && result.isNotEmpty) {
+      setState(() {
+        selectedCity = result;
+        cityController.text = result;
+      });
+      _recheckButton();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50),
+        preferredSize: const Size.fromHeight(50),
         child: AppBar(
           backgroundColor: Colors.white,
           foregroundColor: Colors.white,
           surfaceTintColor: Colors.white,
           elevation: 0,
-          title: Text(
+          title: const Text(
             "Kayıt Ol",
             style: TextStyle(
               color: Colors.black,
@@ -194,119 +174,125 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               fontSize: 24,
             ),
           ),
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: const IconThemeData(color: Colors.black),
         ),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(
-              left: 20,
-              right: 20,
-              bottom: MediaQuery.of(context).viewInsets.bottom),
+            left: 20,
+            right: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Image.asset(
                 "assets/logo.png",
                 width: 256,
                 height: 256,
                 fit: BoxFit.contain,
               ),
-              SizedBox(height: 10),
-              Text("Daim",
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
+              const Text(
+                "Daim",
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
               Text(
                 "Lütfen ${widget.phone} numarası kaydı için bilgilerinizi girin.",
-                style: TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 20),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
+
+              // İsim
               SizedBox(
                 width: 400,
                 height: 60,
                 child: TextField(
                   controller: nameController,
-                  style: TextStyle(fontSize: 16),
-                  decoration: InputDecoration(
+                  style: const TextStyle(fontSize: 16),
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: "İsim",
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
+
+              // Soyisim
               SizedBox(
                 width: 400,
                 height: 60,
                 child: TextField(
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                   controller: surnameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: "Soyisim",
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
+
+              // Şehir seçimi - sadece tıklanır, liste açılır
               SizedBox(
                 width: 400,
                 height: 60,
                 child: TextField(
                   controller: cityController,
-                  style: TextStyle(fontSize: 16),
+                  readOnly: true,
+                  onTap: _openCityPicker,
+                  style: const TextStyle(fontSize: 16),
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Şehir Ara",
-                    suffixIcon: selectedCity != null
-                        ? IconButton(
-                            icon: Icon(Icons.clear),
+                    border: const OutlineInputBorder(),
+                    labelText: "Şehir Seç",
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (selectedCity != null)
+                          IconButton(
+                            tooltip: "Temizle",
+                            icon: const Icon(Icons.clear),
                             onPressed: _clearCitySelection,
-                          )
-                        : null,
-                  ),
-                ),
-              ),
-              if (filteredCities.isNotEmpty)
-                Container(
-                  color: Colors.grey.shade100,
-                  child: Column(
-                    children: List.generate(
-                      min(2, filteredCities.length),
-                      (index) => ListTile(
-                        title: Text(
-                          filteredCities[index],
-                          style: TextStyle(fontSize: 16),
+                          ),
+                        IconButton(
+                          tooltip: "Listeyi aç",
+                          icon: const Icon(Icons.arrow_drop_down),
+                          onPressed: _openCityPicker,
                         ),
-                        onTap: () {
-                          setState(() {
-                            selectedCity = filteredCities[index];
-                            cityController.text = selectedCity!;
-                            filteredCities = [];
-                            _onTextChanged();
-                          });
-                        },
-                      ),
+                      ],
                     ),
                   ),
                 ),
-              SizedBox(height: 20),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Kayıt ol
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
                   onPressed: isButtonEnabled ? completeRegistration : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isButtonEnabled ? Colors.green : Colors.grey,
+                    backgroundColor: isButtonEnabled
+                        ? Colors.green
+                        : Colors.grey,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  child: Text("Kayıt Ol",
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    "Kayıt Ol",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 50),
