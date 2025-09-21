@@ -47,6 +47,8 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<true/>
+		<key>FirebaseAppDelegateProxyEnabled</key>
+		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
 		<key>CFBundleDisplayName</key>
