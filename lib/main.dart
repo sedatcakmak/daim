@@ -1,3 +1,4 @@
+import 'package:daim/firebase_options.dart';
 import 'package:daim/models/app_loader.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
     print('Firebase initialized successfully');
 
     try {
