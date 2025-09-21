@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:daim/firebase_options.dart';
 import 'package:daim/models/app_loader.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,60 +18,62 @@ import 'package:app_links/app_links.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-
-    print('Firebase initialized successfully');
-
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
-
-    try {
-      await FirebaseAppCheck.instance.activate(
-        androidProvider: kReleaseMode
-            ? AndroidProvider.playIntegrity
-            : AndroidProvider.debug,
-        appleProvider: AppleProvider.appAttestWithDeviceCheckFallback,
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
       );
-      await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
+      print('Firebase initialized successfully');
 
-      if (!kReleaseMode) {
-        await FirebaseAuth.instance.setSettings(
-          appVerificationDisabledForTesting: true,
-        ); // ⬅️ emülatör Phone Auth
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
+
+      try {
+        await FirebaseAppCheck.instance.activate(
+          androidProvider: kReleaseMode
+              ? AndroidProvider.playIntegrity
+              : AndroidProvider.debug,
+          appleProvider: AppleProvider.appAttestWithDeviceCheckFallback,
+        );
+        await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
+
+        if (!kReleaseMode) {
+          await FirebaseAuth.instance.setSettings(
+            appVerificationDisabledForTesting: true,
+          );
+        }
+        print('Firebase App Check initialized successfully');
+      } catch (appCheckError, stack) {
+        FirebaseCrashlytics.instance.recordError(
+          appCheckError,
+          stack,
+          fatal: false,
+        );
+        print('App Check initialization failed: $appCheckError');
       }
-      print('Firebase App Check initialized successfully');
-    } catch (appCheckError) {
-      print('App Check initialization failed: $appCheckError');
-    }
 
-    LanguageProvider languageProvider = LanguageProvider();
-    await languageProvider.loadSavedLanguage();
-    print('Language provider initialized successfully');
+      LanguageProvider languageProvider = LanguageProvider();
+      await languageProvider.loadSavedLanguage();
+      print('Language provider initialized successfully');
 
-    runApp(
-      ChangeNotifierProvider<LanguageProvider>.value(
-        value: languageProvider,
-        child: const DaimApp(),
-      ),
-    );
-  } catch (e) {
-    print('Initialization error: $e');
-    runApp(
-      ChangeNotifierProvider<LanguageProvider>(
-        create: (_) => LanguageProvider(),
-        child: const DaimApp(),
-      ),
-    );
-  }
+      runApp(
+        ChangeNotifierProvider<LanguageProvider>.value(
+          value: languageProvider,
+          child: const DaimApp(),
+        ),
+      );
+    },
+    (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    },
+  );
 }
 
 class DaimApp extends StatefulWidget {
