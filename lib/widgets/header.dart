@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:daim/pages/account_page.dart';
-import 'package:daim/pages/language_page.dart';
 import 'package:daim/pages/notifications_page.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
