@@ -1,6 +1,7 @@
 import 'package:daim/firebase_options.dart';
 import 'package:daim/models/app_loader.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,7 +11,7 @@ import 'package:daim/localization/language_provider.dart';
 import 'package:daim/localization/app_localizations.dart';
 import 'package:daim/pages/splash_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'package:flutter/foundation.dart' show kReleaseMode, PlatformDispatcher;
 import 'package:app_links/app_links.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -24,6 +25,12 @@ void main() async {
     );
 
     print('Firebase initialized successfully');
+
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
 
     try {
       await FirebaseAppCheck.instance.activate(
