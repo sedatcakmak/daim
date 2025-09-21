@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daim/models/activity_model.dart';
 import 'package:daim/models/campaign_model.dart';
 import 'package:daim/models/notification_model.dart';

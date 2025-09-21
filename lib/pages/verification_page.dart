@@ -1,14 +1,10 @@
 import 'dart:async';
-import 'dart:io' show Platform;
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daim/managers/auth_manager.dart';
 import 'package:daim/pages/register_page.dart';
 import 'package:daim/pages/type_page.dart';
 import 'package:daim/pages/welcome_page.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
@@ -28,7 +24,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   bool isButtonEnabled = false;
 
-  // SMS/verification state
   String? _verificationId;
   bool _loading = true;
   String? _errorText;
@@ -36,21 +31,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   bool canResendSMS = false;
   Timer? _timer;
 
-  // Retry & guard
   int _attempt = 0;
   final int _maxAttempts = 2;
   bool _done = false;
-
-  String? _cachedToken;
-  Future<bool> _primeAppCheck() async {
-    try {
-      _cachedToken = await FirebaseAppCheck.instance.getToken(false);
-
-      return true;
-    } catch (_) {
-      return true;
-    }
-  }
 
   @override
   void initState() {
@@ -71,36 +54,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     if (!_done) setState(() => _done = true);
   }
 
-  String _tail(String s, [int n = 6]) {
-    if (s.isEmpty) return '';
-    return s.length <= n ? s : s.substring(0, n);
-  }
-
-  Future<void> _rlog(String stage, {Map<String, dynamic>? extra}) async {
-    try {
-      final data = <String, dynamic>{
-        'ts': FieldValue.serverTimestamp(),
-        'stage': stage,
-        'phoneMasked': widget.phone,
-        'verificationId': _verificationId,
-        'resendToken': _resendToken,
-        'appCheckTokenLen': _cachedToken?.length ?? 0,
-        'platform': Platform.operatingSystem,
-        'isRelease': kReleaseMode,
-        'pkg': 'com.cakmakstudios.daim',
-        'projectNumber': '1041416288073',
-        if (extra != null) ...extra,
-      };
-      await firestore.collection('otp_debug').add(data);
-    } on FirebaseException catch (e) {
-      debugPrint('RLOG FS ERROR: ${e.code} | ${e.message}');
-      _showSnack('Log yazılamadı: ${e.code}');
-    } catch (e) {
-      debugPrint('RLOG ERROR: $e');
-      _showSnack('Log hatası');
-    }
-  }
-
   void _showSnack(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context)
@@ -108,7 +61,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       ..showSnackBar(SnackBar(content: Text(msg)));
   }
 
-  // ----------------- PHONE VERIFICATION FLOW -----------------
   int? _resendToken;
 
   Future<void> _startVerification() async {
@@ -122,16 +74,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   Future<void> _verify() async {
     if (_done) return;
-    await _primeAppCheck();
-
-    await _rlog(
-      'verifyPhoneNumber_call',
-      extra: {
-        'attempt': _attempt,
-        'timeoutSec': 120,
-        'forceResendToken': _resendToken,
-      },
-    );
 
     try {
       await auth.verifyPhoneNumber(
@@ -153,18 +95,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               _errorText = e.toString();
               _loading = false;
             });
-            await _rlog(
-              'verification_completed_failed',
-              extra: {'error': e.toString()},
-            );
           }
         },
 
         verificationFailed: (FirebaseAuthException e) async {
-          await _rlog(
-            'verification_failed',
-            extra: {'code': e.code, 'message': e.message ?? ''},
-          );
           if (_done) return;
 
           _attempt++;
@@ -202,28 +136,15 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             _loading = false;
           });
 
-          await _rlog(
-            'code_sent',
-            extra: {
-              'verificationId_tail': _tail(verificationId),
-              'resendToken': resendToken,
-            },
-          );
           _showSnack('Doğrulama kodu gönderildi.');
         },
 
         codeAutoRetrievalTimeout: (String verificationId) async {
           if (!mounted || _done) return;
           setState(() => _verificationId = verificationId);
-          await _rlog(
-            'auto_retrieval_timeout',
-            extra: {'verificationId_tail': _tail(verificationId)},
-          );
-          // İstersen burada sınırlı sayıda yeniden deneyebilirsin
         },
       );
     } catch (e) {
-      await _rlog('verify_call_throw', extra: {'error': e.toString()});
       if (!mounted) return;
       setState(() {
         _errorText = e.toString();
@@ -256,7 +177,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
           if (e.code == 'provider-already-linked' ||
               e.code == 'credential-already-in-use') {
             userCredential = await auth.signInWithCredential(credential);
-            await _rlog('otp_signin_fallback');
           } else {
             rethrow;
           }
@@ -266,7 +186,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       }
 
       if (userCredential.user == null) {
-        await _rlog('otp_user_null');
         _showSnack('HATA!');
         return;
       }
@@ -274,7 +193,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       _markDone();
       await _handlePostSignIn();
     } catch (e) {
-      await _rlog('verify_otp_failed', extra: {'error': e.toString()});
       final msg = e.toString().toLowerCase().contains('invalid')
           ? 'Yanlış kod girildi!'
           : e.toString();
