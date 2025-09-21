@@ -5,6 +5,7 @@ import 'package:daim/pages/register_page.dart';
 import 'package:daim/pages/type_page.dart';
 import 'package:daim/pages/welcome_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
@@ -89,7 +90,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             _markDone();
             setState(() => _loading = false);
             await _handlePostSignIn();
-          } catch (e) {
+          } catch (e, stack) {
+            FirebaseCrashlytics.instance.recordError(e, stack, fatal: true);
             if (!mounted) return;
             setState(() {
               _errorText = e.toString();
@@ -99,12 +101,19 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         },
 
         verificationFailed: (FirebaseAuthException e) async {
+          // 🔹 Burada da Crashlytics logu alalım (fatal = false çünkü app crash değil)
+          FirebaseCrashlytics.instance.recordError(
+            e,
+            e.stackTrace,
+            fatal: false,
+          );
+
           if (_done) return;
 
           _attempt++;
           if (_attempt < _maxAttempts) {
             await Future.delayed(const Duration(seconds: 2));
-            return _verify(); // tek kanaldan retry
+            return _verify(); // retry
           }
 
           if (!mounted) return;
@@ -135,7 +144,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             _resendToken = resendToken;
             _loading = false;
           });
-
           _showSnack('Doğrulama kodu gönderildi.');
         },
 
@@ -144,7 +152,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
           setState(() => _verificationId = verificationId);
         },
       );
-    } catch (e) {
+    } catch (e, stack) {
+      FirebaseCrashlytics.instance.recordError(e, stack, fatal: true);
       if (!mounted) return;
       setState(() {
         _errorText = e.toString();
@@ -173,7 +182,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       if (current != null) {
         try {
           userCredential = await current.linkWithCredential(credential);
-        } on FirebaseAuthException catch (e) {
+        } on FirebaseAuthException catch (e, stack) {
+          FirebaseCrashlytics.instance.recordError(
+            e,
+            stack,
+            fatal: false,
+          ); // 🔹 user error
           if (e.code == 'provider-already-linked' ||
               e.code == 'credential-already-in-use') {
             userCredential = await auth.signInWithCredential(credential);
@@ -192,7 +206,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
       _markDone();
       await _handlePostSignIn();
-    } catch (e) {
+    } catch (e, stack) {
+      // Yanlış kod girme vs. genelde fatal değil
+      FirebaseCrashlytics.instance.recordError(e, stack, fatal: false);
       final msg = e.toString().toLowerCase().contains('invalid')
           ? 'Yanlış kod girildi!'
           : e.toString();
@@ -251,7 +267,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
           builder: (_) => RegistrationScreen(id: user.uid, phone: phone),
         ),
       );
-    } catch (e) {
+    } catch (e, stack) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        fatal: true,
+      ); // 🔹 DB error -> ciddi
       _showSnack('Giriş tamamlanamadı: $e');
     }
   }
