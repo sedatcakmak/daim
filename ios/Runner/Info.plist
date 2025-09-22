@@ -52,6 +52,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
+			<string>daimapp</string>
 			<string>app-1-1041416288073-ios-0cdd121f3121791d618c98</string>
 			</array>
 		</dict>
@@ -60,8 +61,6 @@
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
-		<key>CFBundleDisplayName</key>
-		<string>Daim</string>
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -72,14 +71,5 @@
 		<string>QR kodu taramak için kamera erişimi gereklidir.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Yakın konum tabanlı özellikler için gerekli.</string>
-		<key>CFBundleURLTypes</key>
-		<array>
-			<dict>
-				<key>CFBundleURLSchemes</key>
-				<array>
-					<string>daimapp</string>
-				</array>
-			</dict>
-		</array>
 	</dict>
 </plist>
