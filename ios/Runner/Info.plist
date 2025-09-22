@@ -47,6 +47,15 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<true/>
+		<key>CFBundleURLTypes</key>
+		<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+			<string>app-1-1041416288073-ios-0cdd121f3121791d618c98</string>
+			</array>
+		</dict>
+		</array>
 		<key>FirebaseAppDelegateProxyEnabled</key>
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>

@@ -1,5 +1,4 @@
 import 'package:daim/managers/auth_manager.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
