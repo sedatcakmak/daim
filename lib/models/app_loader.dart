@@ -13,7 +13,6 @@ import 'package:daim/models/order_model.dart';
 import 'package:daim/models/pending_order_model.dart';
 import 'package:daim/models/restaurant_model.dart';
 import 'package:daim/models/star_model.dart';
-import 'package:daim/pages/employee_order_page.dart';
 import 'package:daim/pages/reward_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -50,14 +49,14 @@ class AppLoader {
 
       Information.restaurant = restaurant;
     } catch (e) {
-      print("🔥 Çalışan Hata: $e");
+      debugPrint("🔥 Çalışan Hata: $e");
     }
   }
 
   static Future<RestaurantModel?> _loadRestaurantById(
     String restaurantId,
   ) async {
-    print("bilgi: restaurant yükleniyor ($restaurantId)");
+    debugPrint("bilgi: restaurant yükleniyor ($restaurantId)");
 
     try {
       DocumentSnapshot<Map<String, dynamic>> doc = await _firestore
@@ -73,14 +72,14 @@ class AppLoader {
           await _loadMenu(doc.id),
           await _loadReviews(doc.id),
         );
-        print("bilgi: restaurant doğrulandı (${restaurantModel.name})");
+        debugPrint("bilgi: restaurant doğrulandı (${restaurantModel.name})");
         return restaurantModel;
       } else {
-        print("❗ Uyarı: $restaurantId için restoran bulunamadı.");
+        debugPrint("❗ Uyarı: $restaurantId için restoran bulunamadı.");
         return null;
       }
     } catch (e) {
-      print("HATA BULUNDU: RESTORANT $e");
+      debugPrint("HATA BULUNDU: RESTORANT $e");
       return null;
     }
   }
@@ -160,17 +159,17 @@ class AppLoader {
     );
 
     await walletRef.update({'current_amount': FieldValue.increment(-amount)});
-    print("✅ $amount yıldız başarıyla harcandı");
+    debugPrint("✅ $amount yıldız başarıyla harcandı");
   }
 
   static Future<void> handleDeepLink(String link) async {
-    print("🎯 Deep link geldi: $link");
+    debugPrint("🎯 Deep link geldi: $link");
 
     final uri = Uri.parse(link);
 
     if (uri.host == 'reward') {
       final code = uri.queryParameters['code'];
-      print("📦 Kod alındı: $code");
+      debugPrint("📦 Kod alındı: $code");
 
       if (code != null && Information.userId.isNotEmpty) {
         String newCode = "${Information.userId}-$code";
@@ -184,11 +183,11 @@ class AppLoader {
       "https://api.daimapp.com/verify_qr",
     ).replace(queryParameters: {"code": fullCode});
 
-    print("📤 İstek gönderildi: $uri");
+    debugPrint("📤 İstek gönderildi: $uri");
 
     try {
       final response = await http.get(uri);
-      print("📥 Yanıt: ${response.body}");
+      debugPrint("📥 Yanıt: ${response.body}");
 
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
@@ -216,6 +215,9 @@ class AppLoader {
   }
 
   static Future<void> checkQR(BuildContext context, String code) async {
+    handleDeepLink(code);
+
+    /*
     PendingOrderModel? order = await getPendingOrderById(code);
     if (order != null) {
       Navigator.push(
@@ -230,6 +232,7 @@ class AppLoader {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text("Kod bulunamadı!")));
+    */
   }
 
   static Future<PendingOrderModel?> getPendingOrderById(String docId) async {
@@ -277,12 +280,12 @@ class AppLoader {
           order.surname = userData['surname'];
         }
       } else {
-        print("⚠️ Order içinde phone alanı boş");
+        debugPrint("⚠️ Order içinde phone alanı boş");
       }
 
       return order;
     } catch (e) {
-      print("❌ Sipariş getirilirken hata oluştu: $e");
+      debugPrint("❌ Sipariş getirilirken hata oluştu: $e");
       return null;
     }
   }
@@ -306,7 +309,7 @@ class AppLoader {
   }
 
   static Future<void> _loadUserData() async {
-    print("bilgi: user data");
+    debugPrint("bilgi: user data");
 
     final qs = await _firestore
         .collection('users')
@@ -315,7 +318,7 @@ class AppLoader {
         .get();
 
     if (qs.docs.isEmpty) {
-      print("❌ User bulunamadı ");
+      debugPrint("❌ User bulunamadı ");
       return;
     }
 
@@ -330,7 +333,7 @@ class AppLoader {
     Information.userId = data['user_id'] ?? '';
     Information.badges = List<String>.from(data['badges'] ?? []);
 
-    print("bilgi: user data doğrulandı");
+    debugPrint("bilgi: user data doğrulandı");
   }
 
   static Future<void> movePendingToOrders(PendingOrderModel order) async {
@@ -341,7 +344,7 @@ class AppLoader {
       final pendingSnapshot = await pendingRef.get();
 
       if (!pendingSnapshot.exists) {
-        print("❌ Pending sipariş bulunamadı");
+        debugPrint("❌ Pending sipariş bulunamadı");
         return;
       }
 
@@ -350,17 +353,17 @@ class AppLoader {
 
       await ordersRef.set(pendingData!);
 
-      print("✅ Sipariş verisi orders koleksiyonuna taşındı");
+      debugPrint("✅ Sipariş verisi orders koleksiyonuna taşındı");
 
       final itemsSnapshot = await pendingRef.collection('items').get();
       for (var itemDoc in itemsSnapshot.docs) {
         await ordersRef.collection('items').doc(itemDoc.id).set(itemDoc.data());
       }
 
-      print("✅ Alt koleksiyon (items) taşındı");
+      debugPrint("✅ Alt koleksiyon (items) taşındı");
 
       await pendingRef.delete();
-      print("🗑️ Pending sipariş silindi");
+      debugPrint("🗑️ Pending sipariş silindi");
 
       await addActivity(
         amount: order.price,
@@ -368,12 +371,12 @@ class AppLoader {
         type: "order",
       );
     } catch (e) {
-      print("❌ Hata: $e");
+      debugPrint("❌ Hata: $e");
     }
   }
 
   static Future<void> _loadOrders() async {
-    print("bilgi: orders");
+    debugPrint("bilgi: orders");
 
     try {
       QuerySnapshot orderDocs = await _firestore
@@ -383,7 +386,7 @@ class AppLoader {
 
       if (orderDocs.docs.isEmpty) {
         Information.orders = [];
-        print("bilgi: orders doğrulandı (0 sipariş)");
+        debugPrint("bilgi: orders doğrulandı (0 sipariş)");
         return;
       }
 
@@ -411,14 +414,16 @@ class AppLoader {
       }
 
       Information.orders = orders;
-      print("bilgi: orders doğrulandı (${Information.orders.length} sipariş)");
+      debugPrint(
+        "bilgi: orders doğrulandı (${Information.orders.length} sipariş)",
+      );
     } catch (e) {
-      print("❌ Orders yüklenirken hata oluştu: $e");
+      debugPrint("❌ Orders yüklenirken hata oluştu: $e");
     }
   }
 
   static Future<void> _loadRestaurants() async {
-    print("bilgi: restaurants");
+    debugPrint("bilgi: restaurants");
 
     try {
       QuerySnapshot restaurantDocs = await _firestore
@@ -448,11 +453,11 @@ class AppLoader {
         }),
       );
 
-      print(
+      debugPrint(
         "bilgi: restaurants doğrulandı (${Information.restaurants.length} restoran)",
       );
     } catch (e) {
-      print("HATA BULUNDU: RESTORANT $e");
+      debugPrint("HATA BULUNDU: RESTORANT $e");
     }
   }
 
@@ -469,7 +474,7 @@ class AppLoader {
         return (data['rating'] as num?)?.toInt() ?? 0; // Güvenli cast işlemi
       }).toList();
     } catch (e) {
-      print("❌ Menüyü yüklerken hata oluştu ($restaurantId): $e");
+      debugPrint("❌ Menüyü yüklerken hata oluştu ($restaurantId): $e");
       return [];
     }
   }
@@ -487,13 +492,13 @@ class AppLoader {
         return MenuItemModel.fromMap(data, doc.id);
       }).toList();
     } catch (e) {
-      print("❌ Menüyü yüklerken hata oluştu ($restaurantId): $e");
+      debugPrint("❌ Menüyü yüklerken hata oluştu ($restaurantId): $e");
       return [];
     }
   }
 
   static Future<void> _loadStars() async {
-    print("ℹ️ Wallets yükleniyor...");
+    debugPrint("ℹ️ Wallets yükleniyor...");
 
     try {
       // önce phone eşleşen kullanıcı belgesini bul
@@ -504,7 +509,7 @@ class AppLoader {
           .get();
 
       if (qs.docs.isEmpty) {
-        print("⚠️ Böyle bir kullanıcı bulunamadı");
+        debugPrint("⚠️ Böyle bir kullanıcı bulunamadı");
         return;
       }
 
@@ -518,24 +523,26 @@ class AppLoader {
           .collection('wallets')
           .get();
 
-      print("📌 Wallets belgesi alındı (${walletsSnapshot.docs.length} tane)");
+      debugPrint(
+        "📌 Wallets belgesi alındı (${walletsSnapshot.docs.length} tane)",
+      );
 
       if (walletsSnapshot.docs.isEmpty) {
-        print("⚠️ Kullanıcının hiç yıldız kaydı yok.");
+        debugPrint("⚠️ Kullanıcının hiç yıldız kaydı yok.");
       }
 
       final wallets = walletsSnapshot.docs.map((doc) {
         final data = doc.data();
-        print("🔍 Veri: $data");
+        debugPrint("🔍 Veri: $data");
         return StarModel.fromMap(data, doc.id);
       }).toList();
 
       Information.wallets = wallets;
-      print(
+      debugPrint(
         "✅ Wallets başarıyla yüklendi (${Information.wallets.length} adet).",
       );
     } catch (e) {
-      print("❌ Stars yüklenirken hata oluştu: $e");
+      debugPrint("❌ Stars yüklenirken hata oluştu: $e");
     }
   }
 
@@ -552,7 +559,7 @@ class AppLoader {
           .get();
 
       if (qs.docs.isEmpty) {
-        print("❌ Kullanıcı bulunamadı");
+        debugPrint("❌ Kullanıcı bulunamadı");
         return;
       }
 
@@ -569,14 +576,14 @@ class AppLoader {
             'type': type,
           });
 
-      print("✅ Activity başarıyla eklendi.");
+      debugPrint("✅ Activity başarıyla eklendi.");
     } catch (e) {
-      print("❌ Activity eklenirken hata oluştu: $e");
+      debugPrint("❌ Activity eklenirken hata oluştu: $e");
     }
   }
 
   static Future<void> _loadActivities() async {
-    print("bilgi: activities");
+    debugPrint("bilgi: activities");
 
     final qs = await _firestore
         .collection('users')
@@ -585,7 +592,7 @@ class AppLoader {
         .get();
 
     if (qs.docs.isEmpty) {
-      print("❌ User bulunamadı");
+      debugPrint("❌ User bulunamadı");
       return;
     }
 
@@ -605,12 +612,12 @@ class AppLoader {
     activities.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     Information.activities = activities;
 
-    print("bilgi: activities doğrulandı (${activities.length} aktivite)");
+    debugPrint("bilgi: activities doğrulandı (${activities.length} aktivite)");
   }
 
   /// **Kampanyaları Firestore'dan yükler**
   static Future<void> _loadCampaigns() async {
-    print("bilgi: campaigns");
+    debugPrint("bilgi: campaigns");
     try {
       QuerySnapshot snapshot = await _firestore.collection('campaigns').get();
 
@@ -622,14 +629,14 @@ class AppLoader {
             ),
           )
           .toList();
-      print("bilgi: campaigns doğrulandı");
+      debugPrint("bilgi: campaigns doğrulandı");
     } catch (e) {
-      print("bilgi: campaigns doğrulanmadı");
+      debugPrint("bilgi: campaigns doğrulanmadı");
     }
   }
 
   static Future<void> _loadNotifications() async {
-    print("ℹ️ Notifications yükleniyor...");
+    debugPrint("ℹ️ Notifications yükleniyor...");
 
     try {
       // 1. Genel bildirimleri al
@@ -643,7 +650,7 @@ class AppLoader {
           .get();
 
       if (qs.docs.isEmpty) {
-        print("⚠️ Kullanıcı bulunamadı (phone=).");
+        debugPrint("⚠️ Kullanıcı bulunamadı (phone=).");
         Information.notifications = generalSnap.docs.map((doc) {
           final data = doc.data();
           return NotificationModel.fromMap(data, doc.id);
@@ -677,11 +684,11 @@ class AppLoader {
         ...userNotifications,
       ];
 
-      print(
+      debugPrint(
         "✅ Notifications yüklendi (${Information.notifications.length} adet)",
       );
     } catch (e) {
-      print("❌ Notifications yüklenirken hata oluştu: $e");
+      debugPrint("❌ Notifications yüklenirken hata oluştu: $e");
     }
   }
 
@@ -700,14 +707,16 @@ class AppLoader {
       if (pendingQuery.docs.isNotEmpty) {
         String existingOrderId = pendingQuery.docs.first.id;
         await _firestore.collection('pending').doc(existingOrderId).delete();
-        print("❌ Eski pending siparişi silindi! Order ID: $existingOrderId");
+        debugPrint(
+          "❌ Eski pending siparişi silindi! Order ID: $existingOrderId",
+        );
 
         return true;
       }
 
       return false;
     } catch (e) {
-      print("❌ Pending Order silinirken hata oluştu: $e");
+      debugPrint("❌ Pending Order silinirken hata oluştu: $e");
       return false;
     }
   }
@@ -794,10 +803,10 @@ class AppLoader {
         });
       }
 
-      print("✅ Pending Order Oluşturuldu! Order ID: $orderId");
+      debugPrint("✅ Pending Order Oluşturuldu! Order ID: $orderId");
       return orderId;
     } catch (e) {
-      print("❌ Pending Order oluşturulurken hata oluştu: $e");
+      debugPrint("❌ Pending Order oluşturulurken hata oluştu: $e");
       return "";
     }
   }

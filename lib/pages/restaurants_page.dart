@@ -38,6 +38,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
             return ListTile(
               title: Text(sortingOptions[index]),
               onTap: () {
+                if (!mounted) return;
                 setState(() {
                   selected = index;
                 });
@@ -63,6 +64,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
     Position position = await Geolocator.getCurrentPosition(
       locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
     );
+    if (!mounted) return false;
     setState(() {
       userLatitude = position.latitude;
       userLongitude = position.longitude;
@@ -151,6 +153,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
                           ? IconButton(
                               icon: Icon(Icons.clear),
                               onPressed: () {
+                                if (!mounted) return;
                                 setState(() {
                                   searchController.clear();
                                   searchQuery = "";
@@ -160,6 +163,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
                           : null,
                     ),
                     onChanged: (value) {
+                      if (!mounted) return;
                       setState(() {
                         searchQuery = value;
                       });

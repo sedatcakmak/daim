@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    print('SplashScreen: initState called');
+    debugPrint('SplashScreen: initState called');
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeApp();
@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _initializeApp() async {
     try {
-      print('SplashScreen: Starting auto login...');
+      debugPrint('SplashScreen: Starting auto login...');
 
       // Add a small delay to ensure everything is loaded
       await Future.delayed(const Duration(milliseconds: 500));
@@ -33,9 +33,9 @@ class _SplashScreenState extends State<SplashScreen> {
       if (!mounted) return;
 
       await _authManager.autoLogin(context);
-      print('SplashScreen: Auto login completed');
+      debugPrint('SplashScreen: Auto login completed');
     } catch (e) {
-      print('SplashScreen: Error during initialization: $e');
+      debugPrint('SplashScreen: Error during initialization: $e');
 
       if (!mounted) return;
 
@@ -81,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 width: 256,
                 height: 256,
                 errorBuilder: (context, error, stackTrace) {
-                  print('Error loading logo: $error');
+                  debugPrint('Error loading logo: $error');
                   return Container(
                     width: 256,
                     height: 256,

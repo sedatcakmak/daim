@@ -1,8 +1,5 @@
-import 'package:daim/localization/language_provider.dart';
 import 'package:daim/pages/verification_page.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:provider/provider.dart';
 
 class PhoneNumberScreen extends StatefulWidget {
   const PhoneNumberScreen({super.key});
@@ -151,6 +148,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
     );
   }
 
+  /*
   void _showLanguageBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -241,6 +239,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       ),
     );
   }
+  */
 
   Widget _buildLogo() {
     return Image.asset(

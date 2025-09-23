@@ -19,23 +19,22 @@ class _GenerateQRWidgetState extends State<GenerateQRWidget> {
     final response = await http.post(
       Uri.parse("https://api.daimapp.com/generate_qr"),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "restaurant_id": widget.restaurantId,
-      }),
+      body: jsonEncode({"restaurant_id": widget.restaurantId}),
     );
 
     if (response.statusCode == 200) {
       setState(() {
         qrCode = "https://daimapp.com/reward?code=${response.body}";
-        print(response.body);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('QR başarıyla oluşturuldu!')),
-        );
+        debugPrint(response.body);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('QR başarıyla oluşturuldu!')));
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('QR oluşturulamadı!')),
-      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('QR oluşturulamadı!')));
     }
   }
 
@@ -58,10 +57,7 @@ class _GenerateQRWidgetState extends State<GenerateQRWidget> {
             ),
           ),
         SizedBox(height: 8),
-        ElevatedButton(
-          onPressed: _generateQRCode,
-          child: Text("QR Oluştur"),
-        ),
+        ElevatedButton(onPressed: _generateQRCode, child: Text("QR Oluştur")),
       ],
     );
   }

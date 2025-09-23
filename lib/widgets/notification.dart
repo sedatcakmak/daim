@@ -73,7 +73,7 @@ class NotificationCard extends StatelessWidget {
               width: 80,
               height: 80,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const Icon(
+              errorBuilder: (_, _, _) => const Icon(
                 Icons.image_not_supported,
                 size: 80,
                 color: Colors.grey,

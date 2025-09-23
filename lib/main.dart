@@ -26,7 +26,7 @@ void main() {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-      print('Firebase initialized successfully');
+      debugPrint('Firebase initialized successfully');
 
       FlutterError.onError =
           FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -49,19 +49,19 @@ void main() {
             appVerificationDisabledForTesting: true,
           );
         }
-        print('Firebase App Check initialized successfully');
+        debugPrint('Firebase App Check initialized successfully');
       } catch (appCheckError, stack) {
         FirebaseCrashlytics.instance.recordError(
           appCheckError,
           stack,
           fatal: false,
         );
-        print('App Check initialization failed: $appCheckError');
+        debugPrint('App Check initialization failed: $appCheckError');
       }
 
       LanguageProvider languageProvider = LanguageProvider();
       await languageProvider.loadSavedLanguage();
-      print('Language provider initialized successfully');
+      debugPrint('Language provider initialized successfully');
 
       runApp(
         ChangeNotifierProvider<LanguageProvider>.value(
@@ -96,7 +96,7 @@ class _DaimAppState extends State<DaimApp> {
   Future<void> _checkInitialLink() async {
     final initialUri = await AppLinks().getInitialLink();
     if (initialUri != null) {
-      print("📥 Initial deep link: $initialUri");
+      debugPrint("📥 Initial deep link: $initialUri");
       AppLoader.handleDeepLink(initialUri.toString());
     }
   }
@@ -106,11 +106,11 @@ class _DaimAppState extends State<DaimApp> {
 
     _appLinks.uriLinkStream.listen(
       (uri) {
-        print("🎯 Deep link geldi: ${uri.toString()}");
+        debugPrint("🎯 Deep link geldi: ${uri.toString()}");
         AppLoader.handleDeepLink(uri.toString());
       },
       onError: (err) {
-        print('❌ Deep link error: $err');
+        debugPrint('❌ Deep link error: $err');
       },
     );
   }

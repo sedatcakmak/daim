@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daim/models/app_loader.dart';
 import 'package:daim/models/information.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 class Manager {
   static final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -21,7 +22,7 @@ class Manager {
           .get();
 
       if (userDoc.exists) {
-        print("Bu kullanıcı zaten kayıtlı!");
+        debugPrint("Bu kullanıcı zaten kayıtlı!");
         return "Bu telefon numarası zaten kayıtlı!";
       }
 
@@ -64,7 +65,7 @@ class Manager {
         .get();
 
     if (existingReview.docs.isNotEmpty) {
-      print("Bu sipariş için zaten bir değerlendirme yapılmış.");
+      debugPrint("Bu sipariş için zaten bir değerlendirme yapılmış.");
       return true;
     }
 
@@ -95,10 +96,10 @@ class Manager {
           .reviews
           .add(rating);
 
-      print("Yorum başarıyla eklendi.");
+      debugPrint("Yorum başarıyla eklendi.");
       return true;
     } catch (e) {
-      print("Yorum eklenirken hata oluştu: $e");
+      debugPrint("Yorum eklenirken hata oluştu: $e");
       return false;
     }
   }

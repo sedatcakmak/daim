@@ -39,7 +39,7 @@ class RestaurantModel {
 
   double getRating() {
     return reviews.isNotEmpty
-        ? reviews.fold(0, (sum, star) => sum + star) / reviews.length
+        ? reviews.fold(0, (total, star) => total + star) / reviews.length
         : -1.0;
   }
 

@@ -5,6 +5,7 @@ import 'package:daim/widgets/bottom.dart';
 import 'package:daim/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:vector_math/vector_math_64.dart' as vmath;
 
 class QRPage extends StatefulWidget {
   const QRPage({super.key});
@@ -160,7 +161,7 @@ class _QRPageState extends State<QRPage> {
                 if (_isProcessing)
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(.25),
+                      color: Colors.black.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Center(child: CircularProgressIndicator()),
@@ -236,7 +237,7 @@ class _QRPageState extends State<QRPage> {
     required VoidCallback onTap,
   }) {
     return Material(
-      color: Colors.black.withOpacity(.30),
+      color: Colors.black.withValues(alpha: 0.30),
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
@@ -259,14 +260,16 @@ class _ScanCorners extends StatelessWidget {
   Widget build(BuildContext context) {
     const edge = 22.0;
     const stroke = 4.0;
-    final color = Colors.white.withOpacity(.95);
+    final color = Colors.black.withValues(alpha: 0.95);
 
     Widget corner(Alignment a, {bool flipX = false, bool flipY = false}) {
       return Align(
         alignment: a,
         child: Transform(
           transform: Matrix4.identity()
-            ..scale(flipX ? -1.0 : 1.0, flipY ? -1.0 : 1.0),
+            ..scaleByVector3(
+              vmath.Vector3(flipX ? -1.0 : 1.0, flipY ? -1.0 : 1.0, 1.0),
+            ),
           alignment: Alignment.center,
           child: CustomPaint(
             size: const Size(edge, edge),

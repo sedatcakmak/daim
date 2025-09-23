@@ -34,6 +34,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       widget.phone,
       selectedCity ?? "",
     );
+    if (!mounted) return;
     _authManager.login(context, id, widget.phone, false);
   }
 
@@ -127,7 +128,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: filtered.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      separatorBuilder: (_, _) => const Divider(height: 1),
                       itemBuilder: (context, index) {
                         final city = filtered[index];
                         return ListTile(
