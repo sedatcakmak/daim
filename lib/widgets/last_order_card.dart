@@ -77,6 +77,7 @@ class LastOrderCard extends StatelessWidget {
                   restaurantId: restaurantModel.id,
                   orderId: orderModel.id,
                 )) {
+                  if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text("Zaten bu siparişi değerlendirmişsin!"),
@@ -85,6 +86,7 @@ class LastOrderCard extends StatelessWidget {
                   return;
                 }
 
+                if (!context.mounted) return;
                 showOrderReviewPopup(context, orderModel);
               }),
             ],

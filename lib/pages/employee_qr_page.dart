@@ -5,6 +5,7 @@ import 'package:daim/widgets/employee_bottom.dart';
 import 'package:daim/widgets/employee_header.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:vector_math/vector_math_64.dart' as vmath;
 
 class EmployeeQRPage extends StatefulWidget {
   const EmployeeQRPage({super.key});
@@ -45,9 +46,7 @@ class _EmployeeQRPageState extends State<EmployeeQRPage> {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildQRCard(context),
-            ],
+            children: [_buildQRCard(context)],
           ),
         ),
       ),
@@ -132,9 +131,9 @@ class _EmployeeQRPageState extends State<EmployeeQRPage> {
                 Positioned.fill(child: _ScanCorners()),
 
                 // Üstte butonlar
-// imports aynı: package:mobile_scanner/mobile_scanner.dart
+                // imports aynı: package:mobile_scanner/mobile_scanner.dart
 
-// ... Positioned içinde sağ üst butonlar:
+                // ... Positioned içinde sağ üst butonlar:
                 Positioned(
                   right: 12,
                   top: 12,
@@ -168,12 +167,10 @@ class _EmployeeQRPageState extends State<EmployeeQRPage> {
                 if (_isProcessing)
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(.25),
+                      color: Colors.black.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    child: const Center(child: CircularProgressIndicator()),
                   ),
               ],
             ),
@@ -211,7 +208,9 @@ class _EmployeeQRPageState extends State<EmployeeQRPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                   ),
                 ),
               ),
@@ -225,9 +224,9 @@ class _EmployeeQRPageState extends State<EmployeeQRPage> {
   Future<void> _submitManual() async {
     final text = _textController.text.trim();
     if (text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Kod girmelisin!")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Kod girmelisin!")));
       return;
     }
     setState(() => _isProcessing = true);
@@ -244,7 +243,7 @@ class _EmployeeQRPageState extends State<EmployeeQRPage> {
     required VoidCallback onTap,
   }) {
     return Material(
-      color: Colors.black.withOpacity(.30),
+      color: Colors.black.withValues(alpha: 0.30),
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
@@ -267,14 +266,16 @@ class _ScanCorners extends StatelessWidget {
   Widget build(BuildContext context) {
     const edge = 22.0;
     const stroke = 4.0;
-    final color = Colors.white.withOpacity(.95);
+    final color = Colors.black.withValues(alpha: 0.95);
 
     Widget corner(Alignment a, {bool flipX = false, bool flipY = false}) {
       return Align(
         alignment: a,
         child: Transform(
           transform: Matrix4.identity()
-            ..scale(flipX ? -1.0 : 1.0, flipY ? -1.0 : 1.0),
+            ..scaleByVector3(
+              vmath.Vector3(flipX ? -1.0 : 1.0, flipY ? -1.0 : 1.0, 1.0),
+            ),
           alignment: Alignment.center,
           child: CustomPaint(
             size: const Size(edge, edge),

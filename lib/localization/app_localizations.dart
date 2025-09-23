@@ -17,14 +17,16 @@ class AppLocalizations {
 
   Future<bool> load() async {
     try {
-      String jsonString = await rootBundle
-          .loadString('assets/languages/${locale.languageCode}.json');
+      String jsonString = await rootBundle.loadString(
+        'assets/languages/${locale.languageCode}.json',
+      );
       Map<String, dynamic> jsonMap = json.decode(jsonString);
-      _localizedStrings =
-          jsonMap.map((key, value) => MapEntry(key, value.toString()));
+      _localizedStrings = jsonMap.map(
+        (key, value) => MapEntry(key, value.toString()),
+      );
       return true;
     } catch (e) {
-      print("🚨 Dil dosyası yüklenirken hata oluştu: $e");
+      debugPrint("🚨 Dil dosyası yüklenirken hata oluştu: $e");
       return false;
     }
   }

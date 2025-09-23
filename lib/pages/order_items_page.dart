@@ -249,8 +249,7 @@ class _OrderPageState extends State<OrderPage> {
                               orderModel,
                             );
 
-                            if (!mounted) return;
-
+                            if (!context.mounted) return;
                             Navigator.push(
                               context,
                               MaterialPageRoute(

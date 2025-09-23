@@ -148,6 +148,7 @@ class _OrderReviewPopupState extends State<OrderReviewPopup> {
                   orderId: widget.order.id,
                 );
 
+                if (!context.mounted) return;
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context, true);
                 }

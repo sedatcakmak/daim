@@ -122,7 +122,7 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
               ),
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -142,6 +142,7 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
                   );
                   await AppLoader.movePendingToOrders(widget.order);
 
+                  if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Sipariş başarıyla onaylandı.")),
                   );

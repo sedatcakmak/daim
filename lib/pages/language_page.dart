@@ -47,6 +47,7 @@ class _LanguageState extends State<Language> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('language', langCode);
 
+    if (!mounted) return;
     var languageProvider = Provider.of<LanguageProvider>(
       context,
       listen: false,
@@ -59,6 +60,7 @@ class _LanguageState extends State<Language> {
       )["name"]!;
     });
 
+    if (!mounted) return;
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text("Seçilen Dil: $selectedLanguage")));

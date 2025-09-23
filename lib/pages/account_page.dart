@@ -164,6 +164,7 @@ class AccountInformation extends StatelessWidget {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.remove('phone');
 
+                if (!context.mounted) return;
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => PhoneNumberScreen()),

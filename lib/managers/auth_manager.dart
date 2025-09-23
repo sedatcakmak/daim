@@ -13,6 +13,7 @@ class AuthManager {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (user != null && phone != "") {
+      if (!context.mounted) return;
       await login(context, user.uid, phone, prefs.getBool("employee") ?? false);
     } else {
       if (context.mounted) {

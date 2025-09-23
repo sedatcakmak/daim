@@ -63,7 +63,7 @@ class ContactUsState extends State<ContactUs> {
       "message": message,
     };
 
-    print("📤 İstek gönderildi: $uri");
+    debugPrint("📤 İstek gönderildi: $uri");
 
     try {
       final res = await http.post(
@@ -85,17 +85,19 @@ class ContactUsState extends State<ContactUs> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Hata: $e")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Hata: $e")));
     }
   }
 
   void openInstagram() async {
-    final Uri appUri =
-        Uri.parse("instagram://user?username=daim.app"); // 📱 Uygulama için
-    final Uri webUri =
-        Uri.parse("https://www.instagram.com/daim.app"); // 🌐 Web için
+    final Uri appUri = Uri.parse(
+      "instagram://user?username=daim.app",
+    ); // 📱 Uygulama için
+    final Uri webUri = Uri.parse(
+      "https://www.instagram.com/daim.app",
+    ); // 🌐 Web için
 
     if (await canLaunchUrl(appUri)) {
       await launchUrl(appUri, mode: LaunchMode.externalApplication);
@@ -103,9 +105,9 @@ class ContactUsState extends State<ContactUs> {
       await launchUrl(webUri, mode: LaunchMode.externalApplication);
     } else {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Instagram açılamadı!")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Instagram açılamadı!")));
     }
   }
 
@@ -120,9 +122,9 @@ class ContactUsState extends State<ContactUs> {
       await launchUrl(emailLaunchUri);
     } else {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("E-posta açılamadı!")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("E-posta açılamadı!")));
     }
   }
 
@@ -139,7 +141,7 @@ class ContactUsState extends State<ContactUs> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               DropdownButtonFormField<String>(
-                value: selectedTopic,
+                initialValue: selectedTopic,
                 dropdownColor: Colors.white,
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
@@ -148,8 +150,10 @@ class ContactUsState extends State<ContactUs> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide:
-                        const BorderSide(color: Color(0xFF1098F7), width: 2),
+                    borderSide: const BorderSide(
+                      color: Color(0xFF1098F7),
+                      width: 2,
+                    ),
                   ),
                   labelText: "Konu Seçin",
                   labelStyle: const TextStyle(color: Colors.black),
@@ -158,10 +162,7 @@ class ContactUsState extends State<ContactUs> {
                   ),
                 ),
                 items: topics.map((topic) {
-                  return DropdownMenuItem(
-                    value: topic,
-                    child: Text(topic),
-                  );
+                  return DropdownMenuItem(value: topic, child: Text(topic));
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
@@ -181,8 +182,10 @@ class ContactUsState extends State<ContactUs> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide:
-                        const BorderSide(color: Color(0xFF1098F7), width: 2),
+                    borderSide: const BorderSide(
+                      color: Color(0xFF1098F7),
+                      width: 2,
+                    ),
                   ),
                   labelStyle: const TextStyle(color: Colors.grey),
                   floatingLabelStyle: const TextStyle(color: Color(0xFF1098F7)),
@@ -201,8 +204,10 @@ class ContactUsState extends State<ContactUs> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide:
-                        const BorderSide(color: Color(0xFF1098F7), width: 2),
+                    borderSide: const BorderSide(
+                      color: Color(0xFF1098F7),
+                      width: 2,
+                    ),
                   ),
                   labelStyle: const TextStyle(color: Colors.grey),
                   floatingLabelStyle: const TextStyle(color: Color(0xFF1098F7)),
