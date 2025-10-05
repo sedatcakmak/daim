@@ -1,3 +1,4 @@
+import 'package:daim/managers/deeplink_manager.dart';
 import 'package:daim/models/app_loader.dart';
 import 'package:daim/models/information.dart';
 import 'package:daim/models/restaurant_model.dart';
@@ -225,7 +226,8 @@ class _QRPageState extends State<QRPage> {
     }
     setState(() => _isProcessing = true);
     try {
-      await AppLoader.handleDeepLink(text);
+      final newCode = "${Information.userId}-$text";
+      await DeepLinkManager().verifyQrCode(newCode);
     } finally {
       if (mounted) setState(() => _isProcessing = false);
     }
