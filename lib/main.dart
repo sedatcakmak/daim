@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:daim/firebase_options.dart';
-import 'package:daim/models/app_loader.dart';
+import 'package:daim/managers/deeplink_manager.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +22,7 @@ void main() {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      DeepLinkManager().init();
 
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
@@ -97,7 +98,7 @@ class _DaimAppState extends State<DaimApp> {
     final initialUri = await AppLinks().getInitialLink();
     if (initialUri != null) {
       debugPrint("📥 Initial deep link: $initialUri");
-      AppLoader.handleDeepLink(initialUri.toString());
+      DeepLinkManager().handleDeepLink(initialUri.toString());
     }
   }
 
@@ -107,7 +108,7 @@ class _DaimAppState extends State<DaimApp> {
     _appLinks.uriLinkStream.listen(
       (uri) {
         debugPrint("🎯 Deep link geldi: ${uri.toString()}");
-        AppLoader.handleDeepLink(uri.toString());
+        DeepLinkManager().handleDeepLink(uri.toString());
       },
       onError: (err) {
         debugPrint('❌ Deep link error: $err');

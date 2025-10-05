@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:daim/main.dart';
+import 'package:daim/managers/deeplink_manager.dart';
 import 'package:daim/models/activity_model.dart';
 import 'package:daim/models/campaign_model.dart';
 import 'package:daim/models/information.dart';
@@ -13,9 +11,8 @@ import 'package:daim/models/order_model.dart';
 import 'package:daim/models/pending_order_model.dart';
 import 'package:daim/models/restaurant_model.dart';
 import 'package:daim/models/star_model.dart';
-import 'package:daim/pages/reward_page.dart';
+import 'package:daim/pages/employee_order_page.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class AppLoader {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -162,62 +159,7 @@ class AppLoader {
     debugPrint("✅ $amount yıldız başarıyla harcandı");
   }
 
-  static Future<void> handleDeepLink(String link) async {
-    debugPrint("🎯 Deep link geldi: $link");
-
-    final uri = Uri.parse(link);
-
-    if (uri.host == 'reward') {
-      final code = uri.queryParameters['code'];
-      debugPrint("📦 Kod alındı: $code");
-
-      if (code != null && Information.userId.isNotEmpty) {
-        String newCode = "${Information.userId}-$code";
-        await _verifyQrCode(newCode);
-      }
-    }
-  }
-
-  static Future<void> _verifyQrCode(String fullCode) async {
-    final uri = Uri.parse(
-      "https://api.daimapp.com/verify_qr",
-    ).replace(queryParameters: {"code": fullCode});
-
-    debugPrint("📤 İstek gönderildi: $uri");
-
-    try {
-      final response = await http.get(uri);
-      debugPrint("📥 Yanıt: ${response.body}");
-
-      if (response.statusCode == 200) {
-        final result = json.decode(response.body);
-
-        if (result == true) {
-          _navigateToReward("✅ Kod doğrulandı ve yıldız verildi!");
-        } else {
-          _navigateToReward("❌ Kod geçersiz veya süresi dolmuş.");
-        }
-      } else {
-        _navigateToReward("⚠️ Sunucu hatası: ${response.statusCode}");
-      }
-    } catch (e) {
-      _navigateToReward("⚠️ Hata: $e");
-    }
-  }
-
-  static void _navigateToReward(String message) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      navigatorKey.currentState?.pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => RewardPage(message: message)),
-        (route) => false,
-      );
-    });
-  }
-
   static Future<void> checkQR(BuildContext context, String code) async {
-    handleDeepLink(code);
-
-    /*
     PendingOrderModel? order = await getPendingOrderById(code);
     if (order != null) {
       Navigator.push(
@@ -226,6 +168,10 @@ class AppLoader {
       );
       return;
     }
+
+    DeepLinkManager().handleDeepLink(code);
+
+    /*
 
     ScaffoldMessenger.of(context).clearSnackBars();
 
