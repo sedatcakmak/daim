@@ -13,6 +13,8 @@ class Information {
   static String city = "";
   static String userId = "";
 
+  static bool isGuest = false;
+
   static RestaurantModel? restaurant;
 
   static List<String> badges = [];

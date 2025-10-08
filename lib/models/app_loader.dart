@@ -236,6 +236,16 @@ class AppLoader {
     }
   }
 
+  static Future<void> loadGuestData() async {
+    final futures = [
+      _loadRestaurants(),
+      _loadCampaigns(),
+      _loadGeneralNotifications(),
+    ];
+
+    await Future.wait(futures);
+  }
+
   static Future<void> loadAllData(String? phone) async {
     if (phone == null) return;
     Information.phone = phone;
@@ -376,28 +386,35 @@ class AppLoader {
           .collection('restaurants')
           .get();
 
-      Information.restaurants = await Future.wait(
-        restaurantDocs.docs.map((doc) async {
-          var data = doc.data() as Map<String, dynamic>;
+      Information.restaurants =
+          (await Future.wait(
+                restaurantDocs.docs.map((doc) async {
+                  if (doc.id == "89342613") {
+                    return null;
+                  }
 
-          RestaurantModel restaurantModel = RestaurantModel.fromMap(
-            doc.id,
-            data,
-            await _loadMenu(doc.id),
-            await _loadReviews(doc.id),
-          );
+                  var data = doc.data() as Map<String, dynamic>;
 
-          if (restaurantModel.address.contains(Information.city)) {
-            final now = DateTime.now();
-            final oneWeekAgo = now.subtract(const Duration(days: 7));
-            final createdAt = restaurantModel.createdAt.toDate();
+                  RestaurantModel restaurantModel = RestaurantModel.fromMap(
+                    doc.id,
+                    data,
+                    await _loadMenu(doc.id),
+                    await _loadReviews(doc.id),
+                  );
 
-            restaurantModel.isNew = createdAt.isAfter(oneWeekAgo);
-          }
+                  if (restaurantModel.address.contains(Information.city)) {
+                    final now = DateTime.now();
+                    final oneWeekAgo = now.subtract(const Duration(days: 7));
+                    final createdAt = restaurantModel.createdAt.toDate();
 
-          return restaurantModel;
-        }),
-      );
+                    restaurantModel.isNew = createdAt.isAfter(oneWeekAgo);
+                  }
+
+                  return restaurantModel;
+                }),
+              ))
+              .whereType<RestaurantModel>() // null dönenleri at
+              .toList();
 
       debugPrint(
         "bilgi: restaurants doğrulandı (${Information.restaurants.length} restoran)",
@@ -559,6 +576,20 @@ class AppLoader {
     Information.activities = activities;
 
     debugPrint("bilgi: activities doğrulandı (${activities.length} aktivite)");
+  }
+
+  static Future<void> _loadGeneralNotifications() async {
+    try {
+      final generalSnap = await _firestore.collection('notifications').get();
+
+      Information.notifications = generalSnap.docs.map((doc) {
+        final data = doc.data();
+        return NotificationModel.fromMap(data, doc.id);
+      }).toList();
+      return;
+    } catch (e) {
+      debugPrint("❌ Notifications yüklenirken hata oluştu: $e");
+    }
   }
 
   /// **Kampanyaları Firestore'dan yükler**

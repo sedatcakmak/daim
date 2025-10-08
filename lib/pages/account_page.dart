@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daim/models/app_loader.dart';
+import 'package:daim/models/information.dart';
 import 'package:daim/pages/activites_page.dart';
 import 'package:daim/pages/contact_us_page.dart';
 import 'package:daim/pages/faq_page.dart';
@@ -27,66 +29,74 @@ class AccountInformation extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Promosyon Kodu",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    "Promosyon kodun bulunuyorsa burada kullanabilirsin.",
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 15,
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 60,
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            controller: codeController,
-                            style: TextStyle(fontSize: 16),
-                            decoration: InputDecoration(
-                              labelText: 'Kod',
-                              labelStyle: TextStyle(fontSize: 16),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+            Information.isGuest
+                ? const SizedBox(height: 20)
+                : Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Promosyon Kodu",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          "Promosyon kodun bulunuyorsa burada kullanabilirsin.",
+                          style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: 15,
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 60,
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  controller: codeController,
+                                  style: TextStyle(fontSize: 16),
+                                  decoration: InputDecoration(
+                                    labelText: 'Kod',
+                                    labelStyle: TextStyle(fontSize: 16),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            SizedBox(width: 10),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF1098F7),
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.all(16),
+                              ),
+                              onPressed: () async {
+                                await AppLoader.useCode(
+                                  context,
+                                  codeController.text,
+                                );
+                              },
+                              child: Text(
+                                'Onayla',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF1098F7),
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.all(16),
-                        ),
-                        onPressed: () async {
-                          await AppLoader.useCode(context, codeController.text);
-                        },
-                        child: Text(
-                          'Onayla',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
             SettingsButton(
               title: "Siparişler",
               icon: Icons.production_quantity_limits,
@@ -176,6 +186,94 @@ class AccountInformation extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
+            SizedBox(height: 20),
+            if (!Information.isGuest)
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text(
+                          'Hesabımı Sil',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        content: const Text(
+                          'Hesabınızı ve tüm verilerinizi kalıcı olarak silmek istediğinize emin misiniz?',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Vazgeç'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+
+                              try {
+                                await FirebaseAuth.instance.signOut();
+
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.remove('phone');
+
+                                final user = FirebaseAuth.instance.currentUser;
+                                if (user != null) {
+                                  final userDocs = await FirebaseFirestore
+                                      .instance
+                                      .collection('users')
+                                      .where(
+                                        'phone',
+                                        isEqualTo: Information.phone,
+                                      )
+                                      .limit(1)
+                                      .get();
+
+                                  for (final doc in userDocs.docs) {
+                                    await doc.reference.delete();
+                                  }
+
+                                  await user.delete();
+                                }
+
+                                if (!context.mounted) return;
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PhoneNumberScreen(),
+                                  ),
+                                  (Route<dynamic> route) => false,
+                                );
+                              } catch (e) {
+                                debugPrint('❌ Hesap silinirken hata: $e');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Hesap silinirken hata oluştu.',
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Text('Sil'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: const Text(
+                  'Hesabı Sil',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
             SizedBox(height: 40),
           ],
         ),

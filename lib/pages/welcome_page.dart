@@ -1,3 +1,6 @@
+import 'package:daim/models/app_loader.dart';
+import 'package:daim/models/information.dart';
+import 'package:daim/pages/home_page.dart';
 import 'package:daim/pages/verification_page.dart';
 import 'package:flutter/material.dart';
 
@@ -30,6 +33,14 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       context,
       MaterialPageRoute(builder: (_) => OTPVerificationScreen(phone: phone)),
     );
+  }
+
+  void _goToHomePage() async {
+    await AppLoader.loadGuestData();
+    Information.isGuest = true;
+
+    if (!mounted) return;
+    Navigator.push(context, MaterialPageRoute(builder: (_) => HomePage()));
   }
 
   final List<Map<String, String>> languages = [
@@ -85,6 +96,8 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
               _buildPhoneNumberInput(),
               const SizedBox(height: 40),
               _buildContinueButton(),
+              const SizedBox(height: 20),
+              _buildGuestButton(),
               const SizedBox(height: 40),
               _buildTermsAndPrivacy(),
               const SizedBox(height: 50),
@@ -267,6 +280,30 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
             borderSide: BorderSide(color: Colors.blueAccent, width: 2),
           ),
           border: const OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGuestButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: _goToHomePage,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        child: const Text(
+          "Misafir Olarak Devam Et",
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

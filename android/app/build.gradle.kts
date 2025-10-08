@@ -33,8 +33,8 @@ android {
         applicationId = "com.cakmakstudios.daim"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 34
-        versionName = "1.1.6"
+        versionCode = 35
+        versionName = "1.1.7"
     }
 
     signingConfigs {
