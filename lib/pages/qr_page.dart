@@ -91,36 +91,54 @@ class _QRPageState extends State<QRPage> {
             aspectRatio: 1, // kare alan
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: MobileScanner(
-                    controller: _scannerController,
-                    onDetect: (capture) async {
-                      if (_isProcessing) return;
-
-                      final now = DateTime.now();
-                      // 1 saniyeden sık taramaları filtrele
-                      if (_lastScanAt != null &&
-                          now.difference(_lastScanAt!).inMilliseconds < 1000) {
-                        return;
-                      }
-                      _lastScanAt = now;
-
-                      final barcodes = capture.barcodes;
-                      if (barcodes.isEmpty) return;
-
-                      final text = barcodes.first.rawValue;
-                      if (text == null || text.isEmpty) return;
-
-                      setState(() => _isProcessing = true);
-                      try {
-                        await AppLoader.checkQR(context, text);
-                      } finally {
-                        if (mounted) setState(() => _isProcessing = false);
-                      }
-                    },
+                if (Information.isGuest)
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.white.withOpacity(0.8),
+                      child: Center(
+                        child: Text(
+                          "QR okutmak için giriş yapmalısın",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+
+                if (!Information.isGuest)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: MobileScanner(
+                      controller: _scannerController,
+                      onDetect: (capture) async {
+                        if (_isProcessing) return;
+
+                        final now = DateTime.now();
+                        // 1 saniyeden sık taramaları filtrele
+                        if (_lastScanAt != null &&
+                            now.difference(_lastScanAt!).inMilliseconds <
+                                1000) {
+                          return;
+                        }
+                        _lastScanAt = now;
+
+                        final barcodes = capture.barcodes;
+                        if (barcodes.isEmpty) return;
+
+                        final text = barcodes.first.rawValue;
+                        if (text == null || text.isEmpty) return;
+
+                        setState(() => _isProcessing = true);
+                        try {
+                          await AppLoader.checkQR(context, text);
+                        } finally {
+                          if (mounted) setState(() => _isProcessing = false);
+                        }
+                      },
+                    ),
+                  ),
 
                 // Köşe kılavuzları (scan overlay)
                 Positioned.fill(child: _ScanCorners()),
@@ -190,7 +208,9 @@ class _QRPageState extends State<QRPage> {
               SizedBox(
                 height: 48,
                 child: ElevatedButton.icon(
-                  onPressed: _isProcessing ? null : _submitManual,
+                  onPressed: _isProcessing || Information.isGuest
+                      ? null
+                      : _submitManual,
                   icon: const Icon(Icons.verified),
                   label: const Text(
                     "Doğrula",
