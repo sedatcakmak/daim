@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -16,11 +17,16 @@ class _GenerateQRWidgetState extends State<GenerateQRWidget> {
   String? qrCode;
 
   Future<void> _generateQRCode() async {
-    final response = await http.post(
-      Uri.parse("https://api.daimapp.com/generate_qr"),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"restaurant_id": widget.restaurantId}),
-    );
+    final response = await http
+        .post(
+          Uri.parse("https://api.daimapp.com/generate_qr"),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({"restaurant_id": widget.restaurantId}),
+        )
+        .timeout(
+          const Duration(seconds: 10),
+          onTimeout: () => throw TimeoutException('API timeout'),
+        );
 
     if (response.statusCode == 200) {
       setState(() {

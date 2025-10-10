@@ -162,6 +162,7 @@ class AppLoader {
   static Future<void> checkQR(BuildContext context, String code) async {
     PendingOrderModel? order = await getPendingOrderById(code);
     if (order != null) {
+      if (!context.mounted) return;
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => EmployeeOrderPage(order: order)),
@@ -678,7 +679,7 @@ class AppLoader {
     try {
       QuerySnapshot pendingQuery = await _firestore
           .collection('pending')
-          .where('user_id', isEqualTo: Information.id)
+          .where('phone', isEqualTo: Information.phone)
           .get();
 
       if (pendingQuery.docs.isNotEmpty) {
@@ -687,7 +688,6 @@ class AppLoader {
         debugPrint(
           "❌ Eski pending siparişi silindi! Order ID: $existingOrderId",
         );
-
         return true;
       }
 
