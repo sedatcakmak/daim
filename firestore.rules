@@ -1,0 +1,250 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function: Check if user is an employee of a specific restaurant
+    function isEmployeeOf(restaurantId) {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/employees/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/employees/$(request.auth.uid)).data.restaurant_id == restaurantId;
+    }
+    
+    // USERS COLLECTION
+    match /users/{userId} {
+      // Users can read their own data (matched by phone number in the document)
+      allow get: if isAuthenticated() && resource.data.phone == request.auth.token.phone_number;
+      // Allow list for where queries (filtered by phone on client side)
+      allow list: if isAuthenticated();
+      
+      // Users can create their own user document
+      allow create: if isAuthenticated() && 
+                      request.resource.data.phone == request.auth.token.phone_number &&
+                      request.resource.data.keys().hasAll(['name', 'surname', 'phone', 'city', 'user_id', 'badges']);
+      
+      // Users can update their own data (but not phone or user_id)
+      allow update: if isAuthenticated() && 
+                      resource.data.phone == request.auth.token.phone_number &&
+                      request.resource.data.phone == resource.data.phone &&
+                      request.resource.data.user_id == resource.data.user_id;
+      
+      // Users cannot delete their own account (admin only)
+      allow delete: if false;
+      
+      // WALLETS SUBCOLLECTION
+      match /wallets/{walletId} {
+        // Users can read their own wallets
+        allow get: if isAuthenticated() && 
+                     get(/databases/$(database)/documents/users/$(userId)).data.phone == request.auth.token.phone_number;
+        
+        allow list: if isAuthenticated() && 
+                      get(/databases/$(database)/documents/users/$(userId)).data.phone == request.auth.token.phone_number;
+        
+        // Wallets can be created by the user or employee
+        allow create: if isAuthenticated() && 
+                        get(/databases/$(database)/documents/users/$(userId)).data.phone == request.auth.token.phone_number &&
+                        request.resource.data.keys().hasAll(['restaurant_id', 'current_amount', 'total_amount']);
+        
+        // Wallets can be updated by the user or employee of that restaurant
+        allow update: if (isAuthenticated() && 
+                          get(/databases/$(database)/documents/users/$(userId)).data.phone == request.auth.token.phone_number) ||
+                         isEmployeeOf(resource.data.restaurant_id);
+        
+        // Wallets cannot be deleted
+        allow delete: if false;
+      }
+      
+      // ACTIVITIES SUBCOLLECTION
+      match /activities/{activityId} {
+        // Users can read their own activities
+        allow get: if isAuthenticated() && 
+                     get(/databases/$(database)/documents/users/$(userId)).data.phone == request.auth.token.phone_number;
+        
+        allow list: if isAuthenticated() && 
+                      get(/databases/$(database)/documents/users/$(userId)).data.phone == request.auth.token.phone_number;
+        
+        // Activities can only be created (not updated or deleted)
+        allow create: if isAuthenticated() && 
+                        get(/databases/$(database)/documents/users/$(userId)).data.phone == request.auth.token.phone_number &&
+                        request.resource.data.keys().hasAll(['amount', 'created_at', 'message', 'type']);
+        
+        allow update, delete: if false;
+      }
+      
+      // USER-SPECIFIC NOTIFICATIONS SUBCOLLECTION
+      match /notifications/{notificationId} {
+        // Users can read their own notifications
+        allow get: if isAuthenticated() && 
+                     get(/databases/$(database)/documents/users/$(userId)).data.phone == request.auth.token.phone_number;
+        
+        allow list: if isAuthenticated() && 
+                      get(/databases/$(database)/documents/users/$(userId)).data.phone == request.auth.token.phone_number;
+        
+        // Only admins can create/update/delete user notifications
+        allow write: if false;
+      }
+    }
+    
+    // EMPLOYEES COLLECTION
+    match /employees/{employeeId} {
+      // Employees can read their own data
+      allow get: if isAuthenticated() && resource.data.phone == request.auth.token.phone_number;
+      // Allow list for where queries (filtered by phone on client side)
+      allow list: if isAuthenticated();
+      
+      // Only admins can create/update/delete employees
+      allow write: if false;
+    }
+    
+    // RESTAURANTS COLLECTION
+    match /restaurants/{restaurantId} {
+      // Everyone can read restaurants (even guests for the app to work)
+      allow read: if true;
+      
+      // Only admins can create/update/delete restaurants
+      allow write: if false;
+      
+      // MENU SUBCOLLECTION
+      match /menu/{menuItemId} {
+        // Everyone can read menu items
+        allow read: if true;
+        
+        // Only admins can modify menu
+        allow write: if false;
+      }
+      
+      // REVIEWS SUBCOLLECTION
+      match /reviews/{reviewId} {
+        // Everyone can read reviews
+        allow read: if true;
+        
+        // Authenticated users can create reviews
+        allow create: if isAuthenticated() &&
+                        request.resource.data.keys().hasAll(['rating']);
+        
+        // Users can update their own reviews
+        allow update: if isAuthenticated() && 
+                        resource.data.user_id == request.auth.uid;
+        
+        // Users can delete their own reviews
+        allow delete: if isAuthenticated() && 
+                        resource.data.user_id == request.auth.uid;
+      }
+    }
+    
+    // ORDERS COLLECTION (Completed Orders)
+    match /orders/{orderId} {
+      // Users can read their own orders
+      allow get: if isAuthenticated() && resource.data.phone == request.auth.token.phone_number;
+      // Allow list for where queries (filtered by phone on client side)
+      allow list: if isAuthenticated();
+      
+      // Orders can be created when moving from pending
+      allow create: if isAuthenticated() &&
+                      request.resource.data.keys().hasAll(['restaurant_id', 'phone', 'price', 'created_at']) &&
+                      request.resource.data.phone == request.auth.token.phone_number;
+      
+      // Orders cannot be updated or deleted
+      allow update, delete: if false;
+      
+      // ORDER ITEMS SUBCOLLECTION
+      match /items/{itemId} {
+        // Users can read their own order items
+        allow get: if isAuthenticated() && 
+                     get(/databases/$(database)/documents/orders/$(orderId)).data.phone == request.auth.token.phone_number;
+        
+        allow list: if isAuthenticated() && 
+                      get(/databases/$(database)/documents/orders/$(orderId)).data.phone == request.auth.token.phone_number;
+        
+        // Items can only be created when order is created
+        allow create: if isAuthenticated() &&
+                        get(/databases/$(database)/documents/orders/$(orderId)).data.phone == request.auth.token.phone_number &&
+                        request.resource.data.keys().hasAll(['id', 'unit_price', 'amount', 'user_id']);
+        
+        allow update, delete: if false;
+      }
+    }
+    
+    // PENDING ORDERS COLLECTION (Temporary/Active Orders)
+    match /pending/{pendingId} {
+      // Users can read/list their own pending orders (supports where queries)
+      allow get: if isAuthenticated() && resource.data.phone == request.auth.token.phone_number;
+      // Allow list for where queries (filtered by phone/user_id on client side)
+      allow list: if isAuthenticated();
+      
+      // Employees can read/list pending orders for their restaurant
+      allow get: if isAuthenticated() && isEmployeeOf(resource.data.restaurant_id);
+      
+      // Users can create their own pending orders
+      allow create: if isAuthenticated() &&
+                      request.resource.data.phone == request.auth.token.phone_number &&
+                      request.resource.data.keys().hasAll(['order_id', 'restaurant_id', 'phone', 'price', 'created_at']);
+      
+      // Users can update their own pending orders (for modifications before confirmation)
+      allow update: if isAuthenticated() && resource.data.phone == request.auth.token.phone_number;
+      
+      // Users and employees can delete pending orders
+      allow delete: if (isAuthenticated() && resource.data.phone == request.auth.token.phone_number) ||
+                      isEmployeeOf(resource.data.restaurant_id);
+      
+      // PENDING ORDER ITEMS SUBCOLLECTION
+      match /items/{itemId} {
+        // Users can read their own pending order items
+        allow get: if isAuthenticated() && 
+                     get(/databases/$(database)/documents/pending/$(pendingId)).data.phone == request.auth.token.phone_number;
+        
+        allow list: if isAuthenticated() && 
+                      get(/databases/$(database)/documents/pending/$(pendingId)).data.phone == request.auth.token.phone_number;
+        
+        // Employees can read pending order items for their restaurant
+        allow get, list: if isAuthenticated() && 
+                           isEmployeeOf(get(/databases/$(database)/documents/pending/$(pendingId)).data.restaurant_id);
+        
+        // Users can create/update/delete their own pending order items
+        allow write: if isAuthenticated() &&
+                       get(/databases/$(database)/documents/pending/$(pendingId)).data.phone == request.auth.token.phone_number;
+      }
+    }
+    
+    // CAMPAIGNS COLLECTION
+    match /campaigns/{campaignId} {
+      // Everyone can read campaigns
+      allow read: if true;
+      
+      // Only admins can create/update/delete campaigns
+      allow write: if false;
+    }
+    
+    // GENERAL NOTIFICATIONS COLLECTION
+    match /notifications/{notificationId} {
+      // Everyone can read general notifications
+      allow read: if true;
+      
+      // Only admins can create/update/delete notifications
+      allow write: if false;
+    }
+    
+    // PROMOTIONAL CODES COLLECTION
+    match /codes/{codeId} {
+      // Authenticated users can read codes (to check if valid)
+      allow read: if isAuthenticated();
+      
+      // Users can update codes when using them (increment usage, add to users array)
+      allow update: if isAuthenticated() && 
+                      request.resource.data.usage <= request.resource.data.maximum &&
+                      request.resource.data.usage == resource.data.usage + 1 &&
+                      request.resource.data.users.size() == resource.data.users.size() + 1 &&
+                      request.resource.data.users.hasAny([request.auth.token.phone_number]) &&
+                      !resource.data.users.hasAny([request.auth.token.phone_number]);
+      
+      // Only admins can create/delete codes
+      allow create, delete: if false;
+    }
+  }
+}
+

@@ -35,6 +35,7 @@ class Manager {
         'register': Timestamp.now(),
         'total_balance': 0.0,
         'current_balance': 0.0,
+        'badges': [],
       });
 
       return FirebaseAuth.instance.currentUser!.uid;

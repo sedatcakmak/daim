@@ -175,6 +175,7 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
               icon: Icon(Icons.check, size: 24, color: Colors.white),
             ),
           ),
+          /*
           SizedBox(width: 8),
           Expanded(
             child: ElevatedButton.icon(
@@ -197,6 +198,7 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
               icon: Icon(Icons.close, size: 24, color: Colors.white),
             ),
           ),
+          */
         ],
       ),
     );

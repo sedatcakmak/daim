@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:daim/main.dart';
 import 'package:daim/models/information.dart';
@@ -61,7 +62,12 @@ class DeepLinkManager with WidgetsBindingObserver {
     ).replace(queryParameters: {"code": fullCode});
 
     try {
-      final response = await http.get(uri);
+      final response = await http
+          .get(uri)
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => throw TimeoutException('API timeout'),
+          );
       final result = response.statusCode == 200
           ? json.decode(response.body)
           : false;
