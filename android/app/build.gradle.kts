@@ -31,13 +31,13 @@ android {
 
     defaultConfig {
         applicationId = "com.cakmakstudios.daim"
-        minSdk = 21
+        minSdk = flutter.minSdkVersion
         targetSdk = 34
         versionCode = 37
         versionName = "1.1.9"
 
         ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
         }
     }
 
