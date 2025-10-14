@@ -10,7 +10,6 @@ class RewardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: 'Ödül'),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: Center(

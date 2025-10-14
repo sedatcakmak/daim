@@ -14,7 +14,6 @@ class WalletsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Yıldız Cüzdanı"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: 4),
       body: Padding(

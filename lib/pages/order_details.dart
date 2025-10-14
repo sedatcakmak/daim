@@ -16,7 +16,6 @@ class OrderDetailsPage extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Sipariş Detayları"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: SingleChildScrollView(
@@ -31,11 +30,7 @@ class OrderDetailsPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.grey.shade300),
                 boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                  ),
+                  BoxShadow(color: Colors.grey, spreadRadius: 1, blurRadius: 3),
                 ],
               ),
               child: Row(
@@ -57,12 +52,16 @@ class OrderDetailsPage extends StatelessWidget {
                         Text(
                           restaurant.name,
                           style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
                           restaurant.address,
                           style: TextStyle(
-                              fontSize: 14, color: Colors.grey.shade700),
+                            fontSize: 14,
+                            color: Colors.grey.shade700,
+                          ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -82,18 +81,12 @@ class OrderDetailsPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.grey.shade300),
                 boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                  ),
+                  BoxShadow(color: Colors.grey, spreadRadius: 1, blurRadius: 3),
                 ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildInfoRow("Toplam Fiyat:", "${order.price} ⭐"),
-                ],
+                children: [_buildInfoRow("Toplam Fiyat:", "${order.price} ⭐")],
               ),
             ),
 
@@ -107,11 +100,16 @@ class OrderDetailsPage extends StatelessWidget {
             SizedBox(height: 8),
             Column(
               children: order.items.map((item) {
-                final menuItem =
-                    restaurant.menu.firstWhere((menu) => menu.id == item.id);
+                final menuItem = restaurant.menu.firstWhere(
+                  (menu) => menu.id == item.id,
+                );
 
-                return _buildOrderItem(menuItem.image, item.amount,
-                    menuItem.name, menuItem.price * item.amount);
+                return _buildOrderItem(
+                  menuItem.image,
+                  item.amount,
+                  menuItem.name,
+                  menuItem.price * item.amount,
+                );
               }).toList(),
             ),
           ],
@@ -130,10 +128,7 @@ class OrderDetailsPage extends StatelessWidget {
             title,
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
-          Text(
-            value,
-            style: TextStyle(fontSize: 16, color: Colors.blue),
-          ),
+          Text(value, style: TextStyle(fontSize: 16, color: Colors.blue)),
         ],
       ),
     );
@@ -148,11 +143,7 @@ class OrderDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            spreadRadius: 1,
-            blurRadius: 3,
-          ),
+          BoxShadow(color: Colors.grey, spreadRadius: 1, blurRadius: 3),
         ],
       ),
       child: Row(

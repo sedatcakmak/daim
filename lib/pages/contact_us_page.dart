@@ -131,7 +131,6 @@ class ContactUsState extends State<ContactUs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: const CustomAppBar(title: "Bize Ulaşın"),
       bottomNavigationBar: const CustomBottomNavBar(currentIndex: -1),
       body: SingleChildScrollView(

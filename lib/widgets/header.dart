@@ -1,3 +1,5 @@
+import 'package:daim/main.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -18,54 +20,26 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         height: preferredSize.height + top,
         padding: EdgeInsets.only(top: top, left: 16, right: 16),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFEE741B), Color(0xFFFF9333)], // Açık mavi geçiş
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
           borderRadius: const BorderRadius.vertical(
             bottom: Radius.circular(22),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Başlık
             Text(
               title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
+              style: TextStyle(
+                color: AppColors.black,
+                fontWeight: FontWeight.bold,
                 fontSize: 22,
               ),
             ),
 
-            // Butonlar yan yana
             Row(
               children: [
-                /*
-                _iconButton(
-                  icon: Icons.language,
-                  onTap: () {
-                    if (title != "Dil / Language") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const Language()),
-                      );
-                    }
-                  },
-                ),
-                const SizedBox(width: 12),
-                */
-                _iconButton(
-                  icon: Icons.notifications,
+                _RoundIcon(
+                  icon: CupertinoIcons.bell_fill,
                   onTap: () {
                     if (title != "Bildirimler") {
                       Navigator.push(
@@ -78,8 +52,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   },
                 ),
                 const SizedBox(width: 12),
-                _iconButton(
-                  icon: Icons.account_circle,
+                _RoundIcon(
+                  icon: CupertinoIcons.person_fill,
                   onTap: () {
                     if (title != "Hesap") {
                       Navigator.push(
@@ -99,21 +73,38 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _iconButton({required IconData icon, required VoidCallback onTap}) {
-    return InkWell(
+  @override
+  Size get preferredSize => const Size.fromHeight(48);
+}
+
+class _RoundIcon extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  const _RoundIcon({required this.icon, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
+      behavior: HitTestBehavior.opaque, // boş alana da tıklanabilsin
       child: Container(
-        padding: const EdgeInsets.all(6),
+        height: 48,
+        width: 48,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.25),
-          borderRadius: BorderRadius.circular(10),
+          color: AppColors.white,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.gray.withValues(alpha: 0.25),
+              blurRadius: 12,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
-        child: Icon(icon, color: Colors.white, size: 24),
+        alignment: Alignment.center,
+        child: Icon(icon, size: 22, color: AppColors.black),
       ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(48);
 }

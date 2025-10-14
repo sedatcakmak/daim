@@ -11,7 +11,6 @@ class CampaignDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: campaign.title),
       bottomNavigationBar: const CustomBottomNavBar(currentIndex: -1),
       body: SingleChildScrollView(
@@ -38,10 +37,7 @@ class CampaignDetailPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                campaign.description,
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text(campaign.description, style: const TextStyle(fontSize: 16)),
             ],
           ),
         ),

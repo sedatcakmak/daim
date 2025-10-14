@@ -8,7 +8,6 @@ class PrivacyPolicy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Gizlilik Politikası"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: Padding(

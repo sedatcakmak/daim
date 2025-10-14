@@ -11,7 +11,6 @@ class CampaignListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: const CustomAppBar(title: "Kampanyalar"),
       bottomNavigationBar: const CustomBottomNavBar(currentIndex: -1),
       body: const Padding(

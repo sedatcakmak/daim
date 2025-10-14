@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:daim/models/restaurant_model.dart';
 import 'package:daim/pages/menu_page.dart';
 import 'package:flutter/material.dart';
@@ -55,8 +56,8 @@ class _RecommendedRestaurantState extends State<RestaurantCardWidget> {
   Widget build(BuildContext context) {
     final rating = widget.restaurant.getRating(); // double (-1 ise yok)
     return Card(
-      color: Colors.white,
-      elevation: 5,
+      color: AppColors.white,
+      elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -115,14 +116,14 @@ class _RecommendedRestaurantState extends State<RestaurantCardWidget> {
                             horizontal: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
+                            color: AppColors.black,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
                             widget.restaurant.category,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: Color(0xFF1098F7),
+                              color: AppColors.white,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

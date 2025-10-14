@@ -10,7 +10,6 @@ class AccountActivities extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Hesap Hareketleri"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: Information.activities.isEmpty

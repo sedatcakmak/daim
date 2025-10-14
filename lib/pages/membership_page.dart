@@ -18,7 +18,6 @@ class Membership extends StatelessWidget {
     int required = membership["required"];
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Üyelik"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: SingleChildScrollView(

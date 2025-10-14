@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:flutter/material.dart';
 
 class InfoCard extends StatelessWidget {
@@ -21,20 +22,14 @@ class InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(24),
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black38,
-              blurRadius: 5,
-            )
-          ],
         ),
         child: Row(
           children: [
@@ -49,13 +44,7 @@ class InfoCard extends StatelessWidget {
                   end: Alignment.bottomRight,
                 ),
               ),
-              child: Center(
-                child: Icon(
-                  icon,
-                  size: 28,
-                  color: Colors.white,
-                ),
-              ),
+              child: Center(child: Icon(icon, size: 28, color: Colors.white)),
             ),
             SizedBox(width: 12),
             Expanded(
@@ -76,19 +65,12 @@ class InfoCard extends StatelessWidget {
                   ),
                   Text(
                     description,
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 14,
-                    ),
-                  )
+                    style: TextStyle(color: Colors.black87, fontSize: 14),
+                  ),
                 ],
               ),
             ),
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              color: Colors.grey,
-              size: 28,
-            ),
+            Icon(Icons.arrow_forward_ios_rounded, color: Colors.grey, size: 28),
           ],
         ),
       ),

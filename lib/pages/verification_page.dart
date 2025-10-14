@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daim/main.dart';
 import 'package:daim/managers/auth_manager.dart';
 import 'package:daim/pages/register_page.dart';
 import 'package:daim/pages/type_page.dart';
 import 'package:daim/pages/welcome_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
@@ -317,11 +319,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     final enabled = !_loading && _verificationId != null && isButtonEnabled;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: AppColors.background,
+        surfaceTintColor: AppColors.background,
         elevation: 0,
         title: const Text(
           'Hesap Doğrulama',
@@ -337,7 +338,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             children: [
               const SizedBox(height: 20),
               Image.asset('assets/logo.png', width: 200, height: 200),
-              const SizedBox(height: 10),
               const Text(
                 'Daim',
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
@@ -364,47 +364,98 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                   ),
                 )
               else
-                SizedBox(
-                  width: 380,
-                  child: TextField(
-                    controller: otpController,
-                    keyboardType: TextInputType.number,
-                    maxLength: 6,
-                    onChanged: _onOTPChanged,
-                    textInputAction: TextInputAction.done,
-                    onSubmitted: (_) {
-                      if (enabled) _verifyOTP();
-                    },
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Doğrulama Kodu',
-                    ),
-                    scrollPadding: const EdgeInsets.only(bottom: 200),
+                Container(
+                  padding: EdgeInsets.only(
+                    top: 32,
+                    bottom: 36,
+                    left: 16,
+                    right: 16,
                   ),
-                ),
 
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: enabled ? _verifyOTP : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: enabled ? Colors.green : Colors.grey,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(24)),
                   ),
-                  child: const Text(
-                    'Doğrula',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Doğrulama Kodu",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: AppColors.black,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        CupertinoTextField(
+                          prefix: Padding(
+                            padding: EdgeInsets.only(left: 12, right: 8),
+                            child: Icon(
+                              CupertinoIcons.number,
+                              color: AppColors.gray,
+                            ),
+                          ),
+                          maxLength: 6,
+                          maxLines: 1,
+                          onSubmitted: (_) {
+                            if (enabled) _verifyOTP();
+                          },
+                          placeholder: "Doğrulama kodunu gir.",
+                          obscureText: false,
+                          onChanged: _onOTPChanged,
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: AppColors.gray,
+                              width: 1.2,
+                            ),
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                          ),
+                          controller: otpController,
+                          keyboardType: TextInputType.number,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.black,
+                          ),
+                          placeholderStyle: TextStyle(color: AppColors.gray),
+                        ),
+
+                        const SizedBox(height: 32),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: enabled ? _verifyOTP : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: enabled
+                                  ? AppColors.black
+                                  : AppColors.gray,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              'Doğrula',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
               const SizedBox(height: 20),
 
               TextButton(
@@ -415,7 +466,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       : 'Tekrar SMS Gönder ($resendCooldown)',
                   style: TextStyle(
                     fontSize: 16,
-                    color: canResendSMS ? Colors.blue : Colors.grey,
+                    color: canResendSMS ? AppColors.black : AppColors.gray,
                   ),
                 ),
               ),
@@ -429,9 +480,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     (route) => false,
                   );
                 },
-                child: const Text(
+                child: Text(
                   'Telefon Numarasını Değiştir',
-                  style: TextStyle(fontSize: 16, color: Colors.blue),
+                  style: TextStyle(fontSize: 16, color: AppColors.black),
                 ),
               ),
               const SizedBox(height: 40),

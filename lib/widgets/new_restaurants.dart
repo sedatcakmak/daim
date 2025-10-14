@@ -32,12 +32,6 @@ class _NewRestaurantState extends State<NewRestaurantsWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 10),
-        Divider(
-          color: Color(0xFFE0E0E0),
-          thickness: 1,
-          indent: 16,
-          endIndent: 16,
-        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Row(

@@ -1,4 +1,6 @@
+import 'package:daim/main.dart';
 import 'package:daim/managers/auth_manager.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TypePage extends StatefulWidget {
@@ -17,7 +19,6 @@ class _TypePageState extends State<TypePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Center(
@@ -25,11 +26,11 @@ class _TypePageState extends State<TypePage> {
             mainAxisSize: MainAxisSize.min, // 👈 İçerikleri sıkıştırır
             children: [
               _buildAccountCard(
-                icon: Icons.person,
+                icon: CupertinoIcons.person,
                 title: "Kullanıcı Girişi",
                 description:
                     "Sipariş verin, yıldız kazanın ve fırsatlardan yararlanın.",
-                color: Colors.blueAccent,
+                color: AppColors.black,
                 onTap: () async {
                   _authManager.login(
                     context,
@@ -45,7 +46,7 @@ class _TypePageState extends State<TypePage> {
                 title: "Çalışan Girişi",
                 description:
                     "Müşteri siparişlerinde QR göstererek yıldız kazandırın.",
-                color: Colors.green,
+                color: AppColors.black,
                 onTap: () async {
                   _authManager.login(
                     context,
@@ -72,8 +73,8 @@ class _TypePageState extends State<TypePage> {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 6,
-        color: Colors.white,
+        elevation: 0,
+        color: AppColors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -99,12 +100,12 @@ class _TypePageState extends State<TypePage> {
                     const SizedBox(height: 6),
                     Text(
                       description,
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      style: TextStyle(fontSize: 14, color: AppColors.gray),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.gray),
             ],
           ),
         ),

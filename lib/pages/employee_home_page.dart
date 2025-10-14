@@ -19,7 +19,6 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
   Widget build(BuildContext context) {
     final r = restaurant!;
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomEmployeeAppBar(title: 'Hoşgeldin, ${Information.name}'),
       bottomNavigationBar: CustomEmployeeBottomNavBar(currentIndex: 0),
       body: Padding(
@@ -39,8 +38,10 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
               // ---- Menü Grid ----
               Text(
                 "Menü",
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 8),
               _buildMenuGrid(r),
@@ -61,8 +62,12 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
           if (r.image.isNotEmpty)
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.network(r.image,
-                  width: 56, height: 56, fit: BoxFit.cover),
+              child: Image.network(
+                r.image,
+                width: 56,
+                height: 56,
+                fit: BoxFit.cover,
+              ),
             )
           else
             const CircleAvatar(radius: 28, child: Icon(Icons.storefront)),
@@ -71,11 +76,17 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("${Information.name} ${Information.surname}",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
-                Text(r.name,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                Text(
+                  "${Information.name} ${Information.surname}",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  r.name,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
               ],
             ),
           ),
@@ -92,8 +103,10 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Hızlı İşlem",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            "Hızlı İşlem",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           Row(
             children: [
@@ -104,8 +117,11 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
                   color: const Color(0xFFE8F0FE),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child:
-                    const Icon(Icons.qr_code_2, color: Colors.blue, size: 28),
+                child: const Icon(
+                  Icons.qr_code_2,
+                  color: Colors.blue,
+                  size: 28,
+                ),
               ),
               const SizedBox(width: 12),
               const Expanded(
@@ -127,8 +143,9 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
                   context: context,
                   isScrollControlled: true,
                   shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
                   ),
                   builder: (_) => Padding(
                     padding: EdgeInsets.only(
@@ -149,9 +166,13 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        const Text("QR Oluştur",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        const Text(
+                          "QR Oluştur",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 12),
                         // Mevcut widget’ını aynen kullanıyoruz
                         GenerateQRWidget(restaurantId: r.id),
@@ -209,21 +230,29 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(item.image,
-                    width: 80, height: 80, fit: BoxFit.cover),
+                child: Image.network(
+                  item.image,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
                 item.name,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                    fontSize: 13.5, fontWeight: FontWeight.w600),
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 2),
-              Text("${item.price} ⭐",
-                  style: const TextStyle(fontSize: 13, color: Colors.blue)),
+              Text(
+                "${item.price} ⭐",
+                style: const TextStyle(fontSize: 13, color: Colors.blue),
+              ),
             ],
           ),
         );

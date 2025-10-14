@@ -46,7 +46,6 @@ class _MenuPageState extends State<MenuPage> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: widget.restaurant.name),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: Column(
@@ -106,7 +105,7 @@ class _MenuPageState extends State<MenuPage> {
         children: [
           FloatingActionButton(
             backgroundColor: Colors.white,
-            elevation: 5,
+            elevation: 0,
             child: Icon(
               Icons.shopping_cart_checkout,
               size: 30,
@@ -188,7 +187,7 @@ class _MenuPageState extends State<MenuPage> {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       color: Colors.white,
-      elevation: 3,
+      elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -313,7 +312,7 @@ class _MenuPageState extends State<MenuPage> {
     return Card(
       margin: EdgeInsets.all(8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 5,
+      elevation: 0,
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

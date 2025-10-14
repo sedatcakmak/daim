@@ -17,7 +17,6 @@ class _EmployeeHelpPageState extends State<EmployeeHelpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomEmployeeAppBar(title: 'Kılavuz'),
       bottomNavigationBar: CustomEmployeeBottomNavBar(currentIndex: 2),
       body: Padding(
@@ -30,23 +29,23 @@ class _EmployeeHelpPageState extends State<EmployeeHelpPage> {
                 "Kullanıcı telefonunda bir QR gösterir.",
                 "Uygulamada QR Okut sayfasına gir.",
                 "Kamerayı bu QR'a tut.",
-                "İstediğin kadar yıldız ekleyebilir veya silebilirsin."
+                "İstediğin kadar yıldız ekleyebilir veya silebilirsin.",
               ]),
               _buildBox("Müşteri Sipariş QR'ı Okutma", [
                 "Kullanıcı siparişi için bir QR gösterir.",
                 "QR Okut sayfasında kamerayı bu QR'a tut.",
                 "Sipariş detayları ekranda görünür.",
-                "'Onayla' ile siparişi onayla, 'Reddet' ile iptal et."
+                "'Onayla' ile siparişi onayla, 'Reddet' ile iptal et.",
               ]),
               _buildBox("Yıldız Kazandırma (QR Cihazı Varsa)", [
                 "Kasanın yanında QR cihazı varsa yenileme butonuna bas.",
                 "Ekranda yeni QR çıkar.",
                 "Kullanıcı uygulamasını açmadan yıldız kazanır.",
-                "Her zaman bu yöntemi tercih et."
+                "Her zaman bu yöntemi tercih et.",
               ]),
               _buildBox("Yıldız Kazandırma (Uygulama Üzerinden)", [
                 "Kasada cihaz yoksa veya çalışmıyorsa Ana Sayfa’dan QR oluştur.",
-                "Kullanıcı bu QR’ı okutur ve yıldız kazanır."
+                "Kullanıcı bu QR’ı okutur ve yıldız kazanır.",
               ]),
             ],
           ),
@@ -61,11 +60,7 @@ class _EmployeeHelpPageState extends State<EmployeeHelpPage> {
       borderRadius: BorderRadius.circular(12),
       border: Border.all(color: Colors.grey.shade300),
       boxShadow: [
-        BoxShadow(
-          color: Colors.grey.shade200,
-          spreadRadius: 1,
-          blurRadius: 3,
-        ),
+        BoxShadow(color: Colors.grey.shade200, spreadRadius: 1, blurRadius: 3),
       ],
     );
   }

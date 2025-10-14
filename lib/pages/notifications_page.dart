@@ -14,7 +14,6 @@ class NotificationsPage extends StatelessWidget {
     final notifications = Information.notifications;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Bildirimler"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: notifications.isEmpty

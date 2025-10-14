@@ -31,10 +31,14 @@ android {
 
     defaultConfig {
         applicationId = "com.cakmakstudios.daim"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = 36
-        versionName = "1.1.8"
+        minSdk = 21
+        targetSdk = 34
+        versionCode = 37
+        versionName = "1.1.9"
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"
+        }
     }
 
     signingConfigs {

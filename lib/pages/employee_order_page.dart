@@ -25,7 +25,6 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomEmployeeAppBar(title: 'Sipariş'),
-      backgroundColor: Colors.white,
       bottomNavigationBar: CustomEmployeeBottomNavBar(currentIndex: -1),
       body: Padding(
         padding: const EdgeInsets.all(16),
