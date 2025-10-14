@@ -33,7 +33,7 @@ android {
         applicationId = "com.cakmakstudios.daim"
         minSdk = flutter.minSdkVersion
         targetSdk = 35
-        versionCode = 37
+        versionCode = 38
         versionName = "1.1.9"
 
         ndk {
