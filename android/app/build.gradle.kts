@@ -32,7 +32,7 @@ android {
     defaultConfig {
         applicationId = "com.cakmakstudios.daim"
         minSdk = flutter.minSdkVersion
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 37
         versionName = "1.1.9"
 
