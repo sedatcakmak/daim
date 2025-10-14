@@ -13,7 +13,6 @@ class Orders extends StatelessWidget {
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Siparişler"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: sortedOrders.isEmpty

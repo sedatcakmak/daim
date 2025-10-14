@@ -38,7 +38,6 @@ class _EmployeeQRPageState extends State<EmployeeQRPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomEmployeeAppBar(title: 'QR'),
       bottomNavigationBar: const CustomEmployeeBottomNavBar(currentIndex: 1),
       body: Padding(

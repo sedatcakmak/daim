@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:daim/models/campaign_model.dart';
 import 'package:daim/models/information.dart';
 import 'package:daim/pages/all_campaigns_page.dart';
@@ -43,13 +44,13 @@ class _CampaignsWidgetState extends State<CampaignsWidget> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1098F7),
+                        color: AppColors.black,
                       ),
                     ),
                     Icon(
                       Icons.arrow_forward_ios,
                       size: 16,
-                      color: Color(0xFF1098F7),
+                      color: AppColors.black,
                     ),
                   ],
                 ),
@@ -77,8 +78,8 @@ class _CampaignsWidgetState extends State<CampaignsWidget> {
             effect: WormEffect(
               dotHeight: 8,
               dotWidth: 22,
-              activeDotColor: Color(0xFF1098F7),
-              dotColor: Colors.black,
+              activeDotColor: AppColors.black,
+              dotColor: AppColors.gray,
               spacing: 7,
             ),
           ),

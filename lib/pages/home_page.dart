@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:daim/models/manager.dart';
 import 'package:daim/pages/badge_page.dart';
 import 'package:daim/pages/membership_page.dart';
@@ -23,17 +24,16 @@ class HomePage extends StatelessWidget {
     String name = membership["name"];
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: 'Hoşgeldin, ${Information.name}'),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: 0),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 5),
+            SizedBox(height: 4),
             InfoCard(
               icon: Icons.star,
-              iconBgStart: Colors.orange.shade200,
-              iconBgEnd: Colors.orange.shade700,
+              iconBgStart: AppColors.black,
+              iconBgEnd: AppColors.black,
               title:
                   'Yıldız Cüzdanı: ${Information.wallets.fold(0, (sum, wallet) => sum + wallet.currentAmount)}',
               description:
@@ -47,8 +47,8 @@ class HomePage extends StatelessWidget {
             ),
             InfoCard(
               icon: Icons.people,
-              iconBgStart: Colors.blue.shade200,
-              iconBgEnd: Colors.blue.shade700,
+              iconBgStart: AppColors.black,
+              iconBgEnd: AppColors.black,
               title: 'Üyelik: $name',
               description:
                   'Üyelik seviyeleriyle daha çok fırsattan yararlanabilirsin.',
@@ -61,8 +61,8 @@ class HomePage extends StatelessWidget {
             ),
             InfoCard(
               icon: Icons.badge,
-              iconBgStart: Colors.green.shade200,
-              iconBgEnd: Colors.green.shade700,
+              iconBgStart: AppColors.black,
+              iconBgEnd: AppColors.black,
               title: 'Rozetler: ${Information.badges.length}',
               description:
                   'Rozet listesini görüntüleyip kazandıklarını inceleyebilirsin.',
@@ -74,13 +74,6 @@ class HomePage extends StatelessWidget {
               },
             ),
             SizedBox(height: 10),
-            Divider(
-              color: Color(0xFFE0E0E0),
-              thickness: 1,
-              indent: 16,
-              endIndent: 16,
-            ),
-            SizedBox(height: 5),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
@@ -110,12 +103,6 @@ class HomePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-            Divider(
-              color: Color(0xFFE0E0E0),
-              thickness: 1,
-              indent: 16,
-              endIndent: 16,
-            ),
             CampaignsWidget(),
             RecommendedRestaurantsWidget(),
             NewRestaurantsWidget(),

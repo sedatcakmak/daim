@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:daim/pages/home_page.dart';
 import 'package:daim/pages/qr_page.dart';
 import 'package:daim/pages/restaurants_page.dart';
@@ -84,13 +85,13 @@ class CustomBottomNavBar extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isSelected ? Color(0xFFEE741B) : Colors.grey.shade600,
+            color: isSelected ? AppColors.black : Colors.grey.shade600,
             size: 24,
           ),
           Text(
             label,
             style: TextStyle(
-              color: isSelected ? Color(0xFFEE741B) : Colors.grey.shade600,
+              color: isSelected ? AppColors.black : Colors.grey.shade600,
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
@@ -102,7 +103,7 @@ class CustomBottomNavBar extends StatelessWidget {
             height: 3,
             width: isSelected ? 28 : 0,
             decoration: BoxDecoration(
-              color: isSelected ? Color(0xFFEE741B) : Colors.transparent,
+              color: isSelected ? AppColors.black : Colors.transparent,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -119,12 +120,12 @@ class CustomBottomNavBar extends StatelessWidget {
         if (!isSelected) _navigateToScreen(context, index);
       },
       child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: const BoxDecoration(
-          color: Color(0xFFEE741B),
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.black,
           shape: BoxShape.circle,
           boxShadow: [
-            BoxShadow(color: Color(0xFFEE741B), spreadRadius: 1, blurRadius: 3),
+            BoxShadow(color: AppColors.black, spreadRadius: 1, blurRadius: 3),
           ],
         ),
         child: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 32),

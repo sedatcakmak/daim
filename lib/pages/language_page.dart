@@ -69,7 +69,6 @@ class _LanguageState extends State<Language> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Dil / Language"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: Padding(

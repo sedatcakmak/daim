@@ -29,7 +29,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: "${widget.restaurant.name} siparişi"),
-      backgroundColor: Colors.white,
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: SingleChildScrollView(
         child: Padding(
@@ -56,10 +55,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                   padding: EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      QrImageView(
-                        data: widget.code,
-                        size: 250,
-                      ),
+                      QrImageView(data: widget.code, size: 250),
                       SizedBox(height: 10),
                       Text(
                         widget.code,
@@ -92,7 +88,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                           ScaffoldMessenger.of(context).clearSnackBars();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text("Sipariş başarıyla silindi!")),
+                              content: Text("Sipariş başarıyla silindi!"),
+                            ),
                           );
                         }
 

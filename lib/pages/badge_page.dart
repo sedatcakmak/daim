@@ -77,7 +77,6 @@ class _BadgePageState extends State<BadgePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: 'Rozetler'),
       bottomNavigationBar: const CustomBottomNavBar(currentIndex: -1),
       body: ListView.separated(

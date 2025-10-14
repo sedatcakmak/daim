@@ -23,7 +23,6 @@ class AccountInformation extends StatelessWidget {
     TextEditingController codeController = TextEditingController();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Hesap"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: SingleChildScrollView(

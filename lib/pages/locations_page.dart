@@ -81,7 +81,6 @@ class LocationsState extends State<Locations> {
     final filteredRestaurants = _getFilteredRestaurants();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Konumlar"),
       bottomNavigationBar: const CustomBottomNavBar(currentIndex: 3),
       body: Column(

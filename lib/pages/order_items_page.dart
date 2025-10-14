@@ -93,7 +93,6 @@ class _OrderPageState extends State<OrderPage> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: widget.restaurant.name),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: Column(

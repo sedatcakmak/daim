@@ -18,6 +18,27 @@ import 'package:app_links/app_links.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+class AppColors {
+  static bool get isDark => false;
+  /*
+  static bool get isDark =>
+      WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+      Brightness.dark;
+  */
+
+  static Color get background =>
+      isDark ? Color(0xFF000000) : Color.fromARGB(255, 242, 242, 247);
+
+  static Color get white => isDark ? Color(0xFF171717) : Color(0xFFFFFFFF);
+
+  static Color get black =>
+      isDark ? Color.fromARGB(255, 229, 229, 234) : Color(0xFF000000);
+
+  static Color get gray => isDark
+      ? Color.fromARGB(255, 199, 199, 204)
+      : Color.fromARGB(153, 60, 60, 67);
+}
+
 void main() {
   runZonedGuarded(
     () async {
@@ -126,42 +147,42 @@ class _DaimAppState extends State<DaimApp> {
           debugShowCheckedModeBanner: false,
           locale: languageProvider.locale,
           theme: ThemeData(
-            fontFamily: 'Roboto',
-            scaffoldBackgroundColor: Colors.white,
-            primaryColor: Colors.blue,
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.white,
+            fontFamily: 'SF Pro',
+            scaffoldBackgroundColor: AppColors.background,
+            primaryColor: AppColors.black,
+            appBarTheme: AppBarTheme(
+              backgroundColor: AppColors.background,
               elevation: 0,
-              iconTheme: IconThemeData(color: Colors.black),
+              iconTheme: IconThemeData(color: AppColors.black),
               titleTextStyle: TextStyle(
-                color: Colors.black,
+                color: AppColors.black,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-              backgroundColor: Colors.white,
-              selectedItemColor: Colors.blue,
-              unselectedItemColor: Colors.black,
+            bottomNavigationBarTheme: BottomNavigationBarThemeData(
+              backgroundColor: AppColors.white,
+              selectedItemColor: AppColors.black,
+              unselectedItemColor: AppColors.black,
             ),
-            textTheme: const TextTheme(
-              bodyLarge: TextStyle(color: Colors.black),
-              bodyMedium: TextStyle(color: Colors.black),
-              titleMedium: TextStyle(color: Colors.black),
+            textTheme: TextTheme(
+              bodyLarge: TextStyle(color: AppColors.black),
+              bodyMedium: TextStyle(color: AppColors.black),
+              titleMedium: TextStyle(color: AppColors.black),
             ),
-            inputDecorationTheme: const InputDecorationTheme(
+            inputDecorationTheme: InputDecorationTheme(
               filled: true,
-              fillColor: Colors.white,
+              fillColor: AppColors.white,
               border: OutlineInputBorder(),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue, width: 2),
+                borderSide: BorderSide(color: AppColors.white, width: 2),
               ),
-              labelStyle: TextStyle(color: Colors.black),
+              labelStyle: TextStyle(color: AppColors.black),
             ),
             textSelectionTheme: TextSelectionThemeData(
-              cursorColor: Colors.blue,
-              selectionColor: Colors.blueAccent,
-              selectionHandleColor: Colors.blue,
+              cursorColor: AppColors.black,
+              selectionColor: AppColors.gray,
+              selectionHandleColor: AppColors.black,
             ),
           ),
           supportedLocales: const [Locale('en'), Locale('tr')],

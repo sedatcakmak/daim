@@ -8,7 +8,6 @@ class TermsOfUse extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Kullanım Şartları"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: Padding(

@@ -1,7 +1,9 @@
+import 'package:daim/main.dart';
 import 'package:daim/models/app_loader.dart';
 import 'package:daim/models/information.dart';
 import 'package:daim/pages/home_page.dart';
 import 'package:daim/pages/verification_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PhoneNumberScreen extends StatefulWidget {
@@ -69,7 +71,6 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Padding(
@@ -88,16 +89,11 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
               */
               const SizedBox(height: 10),
               _buildLogo(),
-              const SizedBox(height: 10),
               _buildTitleText(),
               const SizedBox(height: 10),
               _buildDescriptionText(),
               const SizedBox(height: 40),
               _buildPhoneNumberInput(),
-              const SizedBox(height: 40),
-              _buildContinueButton(),
-              const SizedBox(height: 20),
-              _buildGuestButton(),
               const SizedBox(height: 40),
               _buildTermsAndPrivacy(),
               const SizedBox(height: 50),
@@ -152,9 +148,9 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       onTap: onTap,
       child: Text(
         key,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 20,
-          color: Colors.blue,
+          color: AppColors.black,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -168,7 +164,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       builder: (context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
@@ -191,9 +187,9 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       trailing: isSelected
-          ? const Icon(Icons.check_circle, color: Colors.blue)
+          ? const Icon(Icons.check_circle, color:AppColors.black)
           : null,
-      tileColor: isSelected ? Colors.blue.shade100 : null,
+      tileColor: isSelected ?AppColors.black.shade100 : null,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onTap: () {
         if (!isSelected) _changeLanguage(lang["code"]!);
@@ -264,22 +260,57 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   }
 
   Widget _buildPhoneNumberInput() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: TextField(
-        controller: _phoneController,
-        maxLength: 11,
-        maxLines: 1,
-        keyboardType: TextInputType.phone,
-        onChanged: _onPhoneNumberChanged,
-        scrollPadding: EdgeInsets.only(bottom: 200),
-        decoration: InputDecoration(
-          labelText: "Telefon numaranı gir.",
-          labelStyle: const TextStyle(color: Colors.black),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blueAccent, width: 2),
-          ),
-          border: const OutlineInputBorder(),
+    return Container(
+      padding: EdgeInsets.only(top: 32, bottom: 36, left: 16, right: 16),
+
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.all(Radius.circular(24)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Telefon Numarası",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: AppColors.black,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
+            SizedBox(height: 8),
+            CupertinoTextField(
+              prefix: Padding(
+                padding: EdgeInsets.only(left: 12, right: 8),
+                child: Icon(CupertinoIcons.phone, color: AppColors.gray),
+              ),
+              maxLength: 11,
+              maxLines: 1,
+              placeholder: "Telefon numaranı gir.",
+              obscureText: false,
+              onChanged: _onPhoneNumberChanged,
+              padding: EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.gray, width: 1.2),
+                color: AppColors.white,
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              style: TextStyle(fontSize: 16, color: AppColors.black),
+              placeholderStyle: TextStyle(color: AppColors.gray),
+            ),
+            SizedBox(height: 32),
+            _buildContinueButton(),
+            SizedBox(height: 32),
+            _buildGuestButton(),
+          ],
         ),
       ),
     );
@@ -292,16 +323,16 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       child: ElevatedButton(
         onPressed: _goToHomePage,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
+          backgroundColor: AppColors.black,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: const Text(
+        child: Text(
           "Misafir Olarak Devam Et",
           style: TextStyle(
             fontSize: 18,
-            color: Colors.white,
+            color: AppColors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -316,16 +347,16 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       child: ElevatedButton(
         onPressed: isButtonEnabled ? _goToOtp : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isButtonEnabled ? Colors.green : Colors.grey,
+          backgroundColor: isButtonEnabled ? AppColors.black : AppColors.gray,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: const Text(
+        child: Text(
           "Devam Et",
           style: TextStyle(
             fontSize: 18,
-            color: Colors.white,
+            color: AppColors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -340,23 +371,22 @@ class TermsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
         child: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
+          backgroundColor: AppColors.background,
+          foregroundColor: AppColors.background,
+          surfaceTintColor: AppColors.background,
           elevation: 0,
-          title: const Text(
+          title: Text(
             "Kullanım Şartları",
             style: TextStyle(
-              color: Colors.black,
+              color: AppColors.black,
               fontWeight: FontWeight.bold,
               fontSize: 24,
             ),
           ),
-          iconTheme: const IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: AppColors.black),
         ),
       ),
       body: Padding(
@@ -454,23 +484,22 @@ class PrivacyPolicyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
         child: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
+          backgroundColor: AppColors.background,
+          foregroundColor: AppColors.background,
+          surfaceTintColor: AppColors.background,
           elevation: 0,
-          title: const Text(
+          title: Text(
             "Gizlilik Politikası",
             style: TextStyle(
-              color: Colors.black,
+              color: AppColors.black,
               fontWeight: FontWeight.bold,
               fontSize: 24,
             ),
           ),
-          iconTheme: const IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: AppColors.black),
         ),
       ),
       body: Padding(

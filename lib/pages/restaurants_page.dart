@@ -129,7 +129,6 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Restoranlar"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: 1),
       body: Column(
