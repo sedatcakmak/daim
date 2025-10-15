@@ -44,6 +44,8 @@ class LastOrderCard extends StatelessWidget {
               children: [
                 Text(
                   restaurantModel.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -52,10 +54,14 @@ class LastOrderCard extends StatelessWidget {
                 Text(
                   "${_formatDate(orderModel.createdAt.toDate())} - ${orderModel.price} ⭐",
                   style: TextStyle(fontSize: 14),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   "${orderModel.items.length} ürün siparişi",
                   style: TextStyle(fontSize: 14),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
