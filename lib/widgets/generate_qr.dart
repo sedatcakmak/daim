@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:daim/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:qr_flutter/qr_flutter.dart';
@@ -53,7 +54,7 @@ class _GenerateQRWidgetState extends State<GenerateQRWidget> {
             margin: EdgeInsets.all(12),
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.blueAccent),
+              border: Border.all(color: AppColors.black),
               borderRadius: BorderRadius.circular(12),
             ),
             child: QrImageView(

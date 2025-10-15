@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:daim/pages/menu_page.dart';
 import 'package:daim/pages/qr_page.dart';
 import 'package:daim/pages/restaurants_page.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:daim/widgets/bottom.dart';
 import 'package:daim/widgets/header.dart';
 import 'package:daim/models/information.dart';
-import 'package:daim/models/restaurant_model.dart';
 
 class WalletsPage extends StatelessWidget {
   const WalletsPage({super.key});
@@ -18,8 +18,7 @@ class WalletsPage extends StatelessWidget {
       bottomNavigationBar: CustomBottomNavBar(currentIndex: 4),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
             _buildInfoCard(
               icon: Icons.star,
@@ -28,7 +27,7 @@ class WalletsPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => QRPage()),
+                  MaterialPageRoute(builder: (_) => QRPage()),
                 );
               },
             ),
@@ -40,7 +39,7 @@ class WalletsPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => RestaurantListPage()),
+                  MaterialPageRoute(builder: (_) => RestaurantListPage()),
                 );
               },
             ),
@@ -52,76 +51,67 @@ class WalletsPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Membership()),
+                  MaterialPageRoute(builder: (_) => Membership()),
                 );
               },
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               "Yıldız Kazandığın Kafeler",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
-            Information.wallets.isEmpty
-                ? Text(
-                    "Hiçbir kafede daha yıldız kazanmamışsın.",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  )
-                : Expanded(
-                    child: ListView.builder(
-                      itemCount: Information.wallets.length,
-                      itemBuilder: (context, index) {
-                        final star = Information.wallets[index];
-                        final RestaurantModel restaurant = Information
-                            .restaurants
-                            .firstWhere((r) => r.id == star.restaurantId);
+            const SizedBox(height: 8),
 
-                        return Card(
-                          margin: EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 2,
-                          color: Colors.white,
-                          child: ListTile(
-                            leading: restaurant.image.isNotEmpty
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.network(
-                                      restaurant.image,
-                                      width: 50,
-                                      height: 50,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : Icon(
-                                    Icons.storefront,
-                                    size: 50,
-                                    color: Colors.grey,
-                                  ),
-                            title: Text(
-                              restaurant.name,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text("⭐ ${star.currentAmount} yıldız"),
-                            trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      MenuPage(restaurant: restaurant),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
+            if (Information.wallets.isEmpty)
+              const Text(
+                "Hiçbir kafede daha yıldız kazanmamışsın.",
+                style: TextStyle(fontSize: 15),
+              )
+            else
+              ...Information.wallets.map((star) {
+                final restaurant = Information.restaurants.firstWhere(
+                  (r) => r.id == star.restaurantId,
+                );
+                return Card(
+                  margin: EdgeInsets.symmetric(vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  elevation: 0,
+                  color: Colors.white,
+                  child: ListTile(
+                    leading: restaurant.image.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              restaurant.image,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : const Icon(
+                            Icons.storefront,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
+                    title: Text(
+                      restaurant.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text("⭐ ${star.currentAmount} yıldız"),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MenuPage(restaurant: restaurant),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }),
           ],
         ),
       ),
@@ -137,11 +127,11 @@ class WalletsPage extends StatelessWidget {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
+      elevation: 0,
       color: Colors.white,
       child: ListTile(
         onTap: onTap, // ✅ Tıklama olayı
-        leading: Icon(icon, color: Color(0xFF1098F7), size: 50),
+        leading: Icon(icon, color: AppColors.black, size: 50),
         title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(
           description,

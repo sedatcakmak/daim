@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:daim/models/information.dart';
 import 'package:daim/models/restaurant_model.dart';
 import 'package:daim/widgets/employee_bottom.dart';
@@ -85,7 +86,7 @@ class _EmployeeHelpPageState extends State<EmployeeHelpPage> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(Icons.circle, size: 16, color: Colors.blue),
+                    Icon(Icons.circle, size: 16, color: AppColors.black),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(

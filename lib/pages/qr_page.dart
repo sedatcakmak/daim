@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:daim/managers/deeplink_manager.dart';
 import 'package:daim/models/app_loader.dart';
 import 'package:daim/models/information.dart';
@@ -216,7 +217,7 @@ class _QRPageState extends State<QRPage> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: AppColors.black,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

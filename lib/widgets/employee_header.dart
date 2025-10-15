@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:daim/managers/auth_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,23 +18,9 @@ class CustomEmployeeAppBar extends StatelessWidget
         height: preferredSize.height + top,
         padding: EdgeInsets.only(top: top, left: 16, right: 16),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [
-              Colors.blueAccent,
-              Colors.lightBlueAccent
-            ], // Açık mavi geçiş
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(22),
           ),
-          borderRadius:
-              const BorderRadius.vertical(bottom: Radius.circular(22)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -41,9 +28,9 @@ class CustomEmployeeAppBar extends StatelessWidget
             // Başlık
             Text(
               title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
+              style: TextStyle(
+                color: AppColors.black,
+                fontWeight: FontWeight.bold,
                 fontSize: 22,
               ),
             ),
@@ -60,7 +47,7 @@ class CustomEmployeeAppBar extends StatelessWidget
                   },
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -72,27 +59,23 @@ class CustomEmployeeAppBar extends StatelessWidget
       onTap: onTap,
       borderRadius: BorderRadius.circular(10),
       child: Container(
-        padding: const EdgeInsets.all(6),
+        padding: EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.25),
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
             Text(
               "Çıkış Yap",
-              style: const TextStyle(
+              style: TextStyle(
                 overflow: TextOverflow.ellipsis,
-                color: Colors.white,
+                color: AppColors.black,
                 fontSize: 20,
               ),
             ),
             SizedBox(width: 8),
-            Icon(
-              icon,
-              color: Colors.white,
-              size: 22,
-            ),
+            Icon(icon, color: AppColors.black, size: 22),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:daim/models/information.dart';
 import 'package:daim/pages/restaurants_page.dart';
 import 'package:daim/widgets/restaurant_card.dart';
@@ -52,19 +53,19 @@ class _RecommendedRestaurantState extends State<RecommendedRestaurantsWidget> {
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Text(
                       'Tümü',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1098F7),
+                        color: AppColors.black,
                       ),
                     ),
                     Icon(
                       Icons.arrow_forward_ios,
                       size: 16,
-                      color: Color(0xFF1098F7),
+                      color: AppColors.black,
                     ),
                   ],
                 ),
@@ -91,8 +92,8 @@ class _RecommendedRestaurantState extends State<RecommendedRestaurantsWidget> {
             effect: WormEffect(
               dotHeight: 8,
               dotWidth: 22,
-              activeDotColor: Color(0xFF1098F7),
-              dotColor: Colors.black,
+              activeDotColor: AppColors.black,
+              dotColor: AppColors.gray,
               spacing: 7,
             ),
           ),

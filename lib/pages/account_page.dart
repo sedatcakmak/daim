@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daim/main.dart';
 import 'package:daim/models/app_loader.dart';
 import 'package:daim/models/information.dart';
 import 'package:daim/pages/activites_page.dart';
@@ -73,7 +74,7 @@ class AccountInformation extends StatelessWidget {
                             SizedBox(width: 10),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF1098F7),
+                                backgroundColor: AppColors.black,
                                 foregroundColor: Colors.white,
                                 padding: EdgeInsets.all(16),
                               ),
@@ -106,7 +107,6 @@ class AccountInformation extends StatelessWidget {
                 );
               },
             ),
-            Divider(),
             SettingsButton(
               title: "Hesap Hareketleri",
               icon: Icons.account_balance,
@@ -128,7 +128,6 @@ class AccountInformation extends StatelessWidget {
                 );
               },
             ),
-            Divider(),
             SettingsButton(
               title: "Bize Ulaşın",
               icon: Icons.contact_page,
@@ -150,7 +149,6 @@ class AccountInformation extends StatelessWidget {
                 );
               },
             ),
-            Divider(),
             SettingsButton(
               title: "Gizlilik Politikası",
               icon: Icons.access_alarm_rounded,
@@ -164,7 +162,7 @@ class AccountInformation extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF1098F7),
+                backgroundColor: AppColors.black,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 100),
               ),

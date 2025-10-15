@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:daim/main.dart';
 import 'package:daim/models/information.dart';
 import 'package:daim/models/star_model.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +137,7 @@ class _MenuPageState extends State<MenuPage> {
               child: Container(
                 padding: EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: AppColors.black,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                 ),
@@ -275,7 +276,11 @@ class _MenuPageState extends State<MenuPage> {
     bool isEnabled = true,
   }) {
     return IconButton(
-      icon: Icon(icon, size: 32, color: isEnabled ? Colors.blue : Colors.grey),
+      icon: Icon(
+        icon,
+        size: 32,
+        color: isEnabled ? AppColors.black : AppColors.gray,
+      ),
       onPressed: onPressed,
       constraints: BoxConstraints(),
       padding: EdgeInsets.zero,
@@ -352,11 +357,11 @@ class _MenuPageState extends State<MenuPage> {
                   },
                   child: Row(
                     children: [
-                      Icon(Icons.link, size: 18, color: Colors.blue),
+                      Icon(Icons.link, size: 18, color: AppColors.black),
                       SizedBox(width: 6),
                       Text(
                         "İşletme Menüsünü Görüntüle",
-                        style: TextStyle(color: Colors.blue, fontSize: 14),
+                        style: TextStyle(color: AppColors.black, fontSize: 14),
                       ),
                     ],
                   ),
@@ -407,12 +412,15 @@ class _MenuPageState extends State<MenuPage> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.location_on, size: 18, color: Colors.blue),
+                      Icon(Icons.location_on, size: 18, color: AppColors.black),
                       SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           widget.restaurant.address,
-                          style: TextStyle(color: Colors.blue, fontSize: 14),
+                          style: TextStyle(
+                            color: AppColors.black,
+                            fontSize: 14,
+                          ),
                           softWrap: true,
                           overflow: TextOverflow.visible,
                           maxLines: null,
