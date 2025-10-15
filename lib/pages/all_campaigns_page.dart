@@ -45,7 +45,7 @@ class _CampaignListView extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            elevation: 5,
+            elevation: 0,
             color: Colors.white,
             margin: const EdgeInsets.symmetric(vertical: 12),
             child: Column(

@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:daim/models/information.dart';
 import 'package:daim/models/restaurant_model.dart';
 import 'package:daim/widgets/employee_bottom.dart';
@@ -110,20 +111,6 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
           const SizedBox(height: 8),
           Row(
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE8F0FE),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.qr_code_2,
-                  color: Colors.blue,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(width: 12),
               const Expanded(
                 child: Text(
                   "Müşteriye yıldız kazandırmak için QR oluştur.\n(Cihaz yoksa uygulamadan göster.)",
@@ -161,10 +148,6 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
                           width: double.infinity,
                           height: 4,
                           margin: const EdgeInsets.only(bottom: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
                         ),
                         const Text(
                           "QR Oluştur",
@@ -174,7 +157,6 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        // Mevcut widget’ını aynen kullanıyoruz
                         GenerateQRWidget(restaurantId: r.id),
                         const SizedBox(height: 16),
                       ],
@@ -183,8 +165,8 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // mavi
-                foregroundColor: Colors.white,
+                backgroundColor: AppColors.black,
+                foregroundColor: AppColors.white,
                 elevation: 2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -251,7 +233,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
               const SizedBox(height: 2),
               Text(
                 "${item.price} ⭐",
-                style: const TextStyle(fontSize: 13, color: Colors.blue),
+                style: TextStyle(fontSize: 13, color: AppColors.black),
               ),
             ],
           ),

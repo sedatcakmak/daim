@@ -390,9 +390,11 @@ class AppLoader {
       Information.restaurants =
           (await Future.wait(
                 restaurantDocs.docs.map((doc) async {
+                  /*
                   if (doc.id == "89342613") {
                     return null;
                   }
+                 */
 
                   var data = doc.data() as Map<String, dynamic>;
 

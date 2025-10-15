@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:daim/pages/employee_help_page.dart';
 import 'package:daim/pages/employee_home_page.dart';
 import 'package:daim/pages/employee_qr_page.dart';
@@ -38,11 +39,7 @@ class CustomEmployeeBottomNavBar extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.grey,
-            spreadRadius: 3,
-            blurRadius: 8,
-          )
+          BoxShadow(color: Colors.grey, spreadRadius: 3, blurRadius: 8),
         ],
         color: Colors.white,
       ),
@@ -54,14 +51,19 @@ class CustomEmployeeBottomNavBar extends StatelessWidget {
           Expanded(child: _buildNavItem(context, Icons.home, 'Ana Sayfa', 0)),
           Expanded(child: _buildNavItem(context, Icons.qr_code, 'QR Okut', 1)),
           Expanded(
-              child: _buildNavItem(context, Icons.help_outline, 'Kılavuz', 2)),
+            child: _buildNavItem(context, Icons.help_outline, 'Kılavuz', 2),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildNavItem(
-      BuildContext context, IconData icon, String label, int index) {
+    BuildContext context,
+    IconData icon,
+    String label,
+    int index,
+  ) {
     bool isSelected = index == currentIndex;
 
     return GestureDetector(
@@ -73,13 +75,13 @@ class CustomEmployeeBottomNavBar extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isSelected ? Colors.blueAccent : Colors.grey.shade600,
+            color: isSelected ? AppColors.black : Colors.grey.shade600,
             size: 24,
           ),
           Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.blueAccent : Colors.grey.shade600,
+              color: isSelected ? AppColors.black : Colors.grey.shade600,
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
@@ -91,7 +93,7 @@ class CustomEmployeeBottomNavBar extends StatelessWidget {
             height: 3,
             width: isSelected ? 28 : 0,
             decoration: BoxDecoration(
-              color: isSelected ? Colors.blueAccent : Colors.transparent,
+              color: isSelected ? AppColors.black : Colors.transparent,
               borderRadius: BorderRadius.circular(2),
             ),
           ),

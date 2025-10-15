@@ -22,10 +22,6 @@ class NotificationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black),
-        boxShadow: const [
-          BoxShadow(color: Colors.black26, blurRadius: 5, spreadRadius: 1),
-        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

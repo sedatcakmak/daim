@@ -1,6 +1,8 @@
 import 'dart:io' show Platform;
+import 'package:daim/main.dart';
 import 'package:daim/models/information.dart';
 import 'package:daim/models/restaurant_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:daim/widgets/bottom.dart';
 import 'package:daim/widgets/header.dart';
@@ -88,9 +90,9 @@ class LocationsState extends State<Locations> {
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Mağaza Ara",
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: Icon(CupertinoIcons.search),
                 border: OutlineInputBorder(),
               ),
               onChanged: (v) => setState(() => _searchQuery = v),
@@ -102,11 +104,7 @@ class LocationsState extends State<Locations> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.search_off,
-                          size: 64,
-                          color: Colors.grey[400],
-                        ),
+                        Icon(CupertinoIcons.search, size: 64),
                         const SizedBox(height: 16),
                         Text(
                           _searchQuery.isEmpty
@@ -114,7 +112,6 @@ class LocationsState extends State<Locations> {
                               : 'Aradığınız restoran bulunamadı',
                           style: TextStyle(
                             fontSize: 18,
-                            color: Colors.grey[600],
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -122,10 +119,7 @@ class LocationsState extends State<Locations> {
                           const SizedBox(height: 8),
                           Text(
                             '"$_searchQuery" için sonuç bulunamadı',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[500],
-                            ),
+                            style: TextStyle(fontSize: 14),
                           ),
                         ],
                       ],
@@ -136,7 +130,7 @@ class LocationsState extends State<Locations> {
                     itemBuilder: (context, index) {
                       final r = filteredRestaurants[index];
                       return Card(
-                        elevation: 3,
+                        elevation: 0,
                         color: Colors.white,
                         margin: const EdgeInsets.symmetric(
                           horizontal: 8,
@@ -160,16 +154,19 @@ class LocationsState extends State<Locations> {
                               const SizedBox(height: 4),
                               Row(
                                 children: [
-                                  const Icon(
-                                    Icons.location_on,
-                                    size: 16,
-                                    color: Colors.red,
+                                  Icon(
+                                    CupertinoIcons.location_fill,
+                                    size: 24,
+                                    color: AppColors.black,
                                   ),
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
                                       r.address,
                                       style: const TextStyle(fontSize: 14),
+                                      maxLines: 1,
+                                      overflow: TextOverflow
+                                          .ellipsis, // taşan kısmı ... yap
                                     ),
                                   ),
                                 ],
@@ -177,10 +174,10 @@ class LocationsState extends State<Locations> {
                               const SizedBox(height: 4),
                               Row(
                                 children: [
-                                  const Icon(
-                                    Icons.access_time,
-                                    size: 16,
-                                    color: Colors.blue,
+                                  Icon(
+                                    CupertinoIcons.timer_fill,
+                                    size: 24,
+                                    color: AppColors.black,
                                   ),
                                   const SizedBox(width: 4),
                                   Expanded(
@@ -194,7 +191,7 @@ class LocationsState extends State<Locations> {
                             ],
                           ),
                           trailing: Material(
-                            color: Colors.blue,
+                            color: AppColors.black,
                             borderRadius: BorderRadius.circular(8),
                             child: InkWell(
                               borderRadius: BorderRadius.circular(8),
