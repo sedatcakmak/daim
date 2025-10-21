@@ -18,6 +18,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.cakmakstudios.daim"
     compileSdk = 36
+    ndkVersion = "29.0.14206865"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -30,7 +31,7 @@ android {
 
     defaultConfig {
         applicationId = "com.cakmakstudios.daim"
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = 36
         versionCode = 41
         versionName = "1.2.2"
@@ -79,4 +80,8 @@ dependencies {
     implementation("com.google.android.play:integrity:1.4.0")
     implementation("com.google.firebase:firebase-crashlytics-ndk")
     implementation("com.google.firebase:firebase-analytics")
+}
+
+afterEvaluate {
+    android.defaultConfig.minSdk = 23
 }
