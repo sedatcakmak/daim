@@ -17,8 +17,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.cakmakstudios.daim"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = "29.0.13113456"
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -31,8 +30,8 @@ android {
 
     defaultConfig {
         applicationId = "com.cakmakstudios.daim"
-        minSdk = flutter.minSdkVersion
-        targetSdk = 35
+        minSdk = 23
+        targetSdk = 36
         versionCode = 41
         versionName = "1.2.2"
 
@@ -62,6 +61,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
     }
 }
 
@@ -71,7 +74,6 @@ flutter {
 
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
-    implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.android.play:feature-delivery:2.1.0")
     implementation("com.google.android.play:integrity:1.4.0")
