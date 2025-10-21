@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daim/main.dart';
-import 'package:daim/models/app_loader.dart';
 import 'package:daim/models/information.dart';
 import 'package:daim/pages/activites_page.dart';
 import 'package:daim/pages/contact_us_page.dart';
@@ -20,14 +19,14 @@ class AccountInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController codeController = TextEditingController();
-
+    //TextEditingController codeController = TextEditingController();
     return Scaffold(
       appBar: CustomAppBar(title: "Hesap"),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: -1),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            /*
             Information.isGuest
                 ? const SizedBox(height: 20)
                 : Padding(
@@ -35,22 +34,7 @@ class AccountInformation extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Promosyon Kodu",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          "Promosyon kodun bulunuyorsa burada kullanabilirsin.",
-                          style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            fontSize: 15,
-                          ),
-                        ),
-                        SizedBox(height: 15),
+                        
                         Row(
                           children: [
                             Expanded(
@@ -96,6 +80,8 @@ class AccountInformation extends StatelessWidget {
                       ],
                     ),
                   ),
+            */
+            const SizedBox(height: 20),
             SettingsButton(
               title: "Siparişler",
               icon: Icons.production_quantity_limits,

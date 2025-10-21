@@ -218,6 +218,7 @@ class _MenuPageState extends State<MenuPage> {
                     item.description,
                     style: TextStyle(fontSize: 12, color: Colors.grey[700]),
                     overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ],
               ),
