@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:daim/main.dart';
 import 'package:flutter/material.dart';
 import 'package:daim/widgets/bottom.dart';
 import 'package:daim/widgets/header.dart';
@@ -149,10 +150,7 @@ class ContactUsState extends State<ContactUs> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: const BorderSide(
-                      color: Color(0xFF1098F7),
-                      width: 2,
-                    ),
+                    borderSide: BorderSide(color: AppColors.black, width: 2),
                   ),
                   labelText: "Konu Seçin",
                   labelStyle: const TextStyle(color: Colors.black),
@@ -181,13 +179,10 @@ class ContactUsState extends State<ContactUs> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: const BorderSide(
-                      color: Color(0xFF1098F7),
-                      width: 2,
-                    ),
+                    borderSide: BorderSide(color: AppColors.black, width: 2),
                   ),
-                  labelStyle: const TextStyle(color: Colors.grey),
-                  floatingLabelStyle: const TextStyle(color: Color(0xFF1098F7)),
+                  labelStyle: TextStyle(color: Colors.grey),
+                  floatingLabelStyle: TextStyle(color: AppColors.black),
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
@@ -199,17 +194,14 @@ class ContactUsState extends State<ContactUs> {
                   labelText: 'Mesajınız',
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: const BorderSide(color: Colors.black, width: 1),
+                    borderSide: BorderSide(color: Colors.black, width: 1),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: const BorderSide(
-                      color: Color(0xFF1098F7),
-                      width: 2,
-                    ),
+                    borderSide: BorderSide(color: AppColors.black, width: 2),
                   ),
-                  labelStyle: const TextStyle(color: Colors.grey),
-                  floatingLabelStyle: const TextStyle(color: Color(0xFF1098F7)),
+                  labelStyle: TextStyle(color: Colors.grey),
+                  floatingLabelStyle: TextStyle(color: AppColors.black),
                 ),
                 maxLines: 5,
               ),
@@ -219,8 +211,8 @@ class ContactUsState extends State<ContactUs> {
                 child: ElevatedButton(
                   onPressed: sendMessage,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF1098F7),
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.black,
+                    foregroundColor: AppColors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -245,12 +237,12 @@ class ContactUsState extends State<ContactUs> {
               GestureDetector(
                 onTap: openInstagram,
                 child: Row(
-                  children: const [
-                    Icon(Icons.camera_alt, color: Color(0xFF1098F7), size: 24),
+                  children: [
+                    Icon(Icons.camera_alt, color: AppColors.black, size: 24),
                     SizedBox(width: 8),
                     Text(
                       "daim.app",
-                      style: TextStyle(fontSize: 16, color: Color(0xFF1098F7)),
+                      style: TextStyle(fontSize: 16, color: AppColors.black),
                     ),
                   ],
                 ),
@@ -259,12 +251,12 @@ class ContactUsState extends State<ContactUs> {
               GestureDetector(
                 onTap: openEmail,
                 child: Row(
-                  children: const [
-                    Icon(Icons.email, color: Color(0xFF1098F7), size: 24),
+                  children: [
+                    Icon(Icons.email, color: AppColors.black, size: 24),
                     SizedBox(width: 8),
                     Text(
                       "support@daimapp.com",
-                      style: TextStyle(fontSize: 16, color: Color(0xFF1098F7)),
+                      style: TextStyle(fontSize: 16, color: AppColors.black),
                     ),
                   ],
                 ),

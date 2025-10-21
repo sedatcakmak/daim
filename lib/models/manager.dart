@@ -1,32 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daim/models/app_loader.dart';
 import 'package:daim/models/information.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 class Manager {
   static final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  static Future<String> createUser(
+  static Future<void> createUser(
     String name,
     String surname,
     String phone,
     String city,
   ) async {
     try {
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-
-      DocumentSnapshot userDoc = await firestore
+      QuerySnapshot<Map<String, dynamic>> userDoc = await firestore
           .collection('users')
-          .doc(userId)
+          .where('phone', isEqualTo: Information.phone)
+          .limit(1)
           .get();
 
-      if (userDoc.exists) {
+      if (userDoc.docs.isNotEmpty) {
         debugPrint("Bu kullanıcı zaten kayıtlı!");
-        return "Bu telefon numarası zaten kayıtlı!";
+        return;
       }
 
-      await firestore.collection('users').doc(userId).set({
+      await firestore.collection('users').doc().set({
         'name': name,
         'city': city,
         'surname': surname,
@@ -37,10 +35,8 @@ class Manager {
         'current_balance': 0.0,
         'badges': [],
       });
-
-      return FirebaseAuth.instance.currentUser!.uid;
     } catch (e) {
-      return "❌ Kullanıcı oluşturulurken hata oluştu: $e";
+      return;
     }
   }
 

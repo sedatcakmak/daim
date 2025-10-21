@@ -10,7 +10,6 @@ import 'package:daim/pages/privacy_policy_page.dart';
 import 'package:daim/pages/terms_of_use_page.dart';
 import 'package:daim/pages/welcome_page.dart';
 import 'package:daim/widgets/settings_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:daim/widgets/bottom.dart';
 import 'package:daim/widgets/header.dart';
@@ -167,7 +166,6 @@ class AccountInformation extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 100),
               ),
               onPressed: () async {
-                await FirebaseAuth.instance.signOut();
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.remove('phone');
 
@@ -215,29 +213,22 @@ class AccountInformation extends StatelessWidget {
                               Navigator.of(context).pop();
 
                               try {
-                                await FirebaseAuth.instance.signOut();
-
                                 final prefs =
                                     await SharedPreferences.getInstance();
                                 await prefs.remove('phone');
 
-                                final user = FirebaseAuth.instance.currentUser;
-                                if (user != null) {
-                                  final userDocs = await FirebaseFirestore
-                                      .instance
-                                      .collection('users')
-                                      .where(
-                                        'phone',
-                                        isEqualTo: Information.phone,
-                                      )
-                                      .limit(1)
-                                      .get();
+                                final userDocs = await FirebaseFirestore
+                                    .instance
+                                    .collection('users')
+                                    .where(
+                                      'phone',
+                                      isEqualTo: Information.phone,
+                                    )
+                                    .limit(1)
+                                    .get();
 
-                                  for (final doc in userDocs.docs) {
-                                    await doc.reference.delete();
-                                  }
-
-                                  await user.delete();
+                                for (final doc in userDocs.docs) {
+                                  await doc.reference.delete();
                                 }
 
                                 if (!context.mounted) return;

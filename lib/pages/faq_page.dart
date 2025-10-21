@@ -73,7 +73,7 @@ class _FAQState extends State<FAQ> {
               },
               child: Card(
                 color: Colors.white,
-                elevation: 3,
+                elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

@@ -1,7 +1,7 @@
 name: daim
 description: "Kafe ve restoranlar için özel tasarlanmış modern sadakat yönetim sistemi!"
 publish_to: 'none'
-version: 1.2.1+20
+version: 1.2.2+21
 
 environment:
   sdk: ^3.9.0
@@ -18,7 +18,6 @@ dependencies:
 
   # Firebase
   firebase_core: ^4.0.0
-  firebase_auth: ^6.0.1
   cloud_firestore: ^6.0.0
   firebase_app_check: ^0.4.0
   firebase_crashlytics: ^5.0.1

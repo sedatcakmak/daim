@@ -5,6 +5,7 @@ import 'package:daim/pages/home_page.dart';
 import 'package:daim/pages/verification_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class PhoneNumberScreen extends StatefulWidget {
   const PhoneNumberScreen({super.key});
@@ -35,6 +36,32 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       context,
       MaterialPageRoute(builder: (_) => OTPVerificationScreen(phone: phone)),
     );
+
+    _sendOtp(phone);
+  }
+
+  Future<void> _sendOtp(String phone) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://api.daimapp.com/send_otp'),
+        body: {'phone': phone},
+      );
+
+      if (response.statusCode == 200) {
+        _showSnack('Doğrulama kodu gönderildi.');
+      } else {
+        _showSnack('SMS gönderilemedi!');
+      }
+    } catch (e) {
+      _showSnack('Hata: $e');
+    }
+  }
+
+  void _showSnack(String msg) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(SnackBar(content: Text(msg)));
   }
 
   void _goToHomePage() async {

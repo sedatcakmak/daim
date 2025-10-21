@@ -4,10 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TypePage extends StatefulWidget {
-  final String userId;
   final String phone;
 
-  const TypePage({super.key, required this.userId, required this.phone});
+  const TypePage({super.key, required this.phone});
 
   @override
   State<TypePage> createState() => _TypePageState();
@@ -32,12 +31,7 @@ class _TypePageState extends State<TypePage> {
                     "Sipariş verin, yıldız kazanın ve fırsatlardan yararlanın.",
                 color: AppColors.black,
                 onTap: () async {
-                  _authManager.login(
-                    context,
-                    widget.userId,
-                    widget.phone,
-                    false,
-                  );
+                  _authManager.login(context, widget.phone, false);
                 },
               ),
               const SizedBox(height: 20),
@@ -48,12 +42,7 @@ class _TypePageState extends State<TypePage> {
                     "Müşteri siparişlerinde QR göstererek yıldız kazandırın.",
                 color: AppColors.black,
                 onTap: () async {
-                  _authManager.login(
-                    context,
-                    widget.userId,
-                    widget.phone,
-                    true,
-                  );
+                  _authManager.login(context, widget.phone, true);
                 },
               ),
             ],

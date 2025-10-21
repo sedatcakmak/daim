@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final String phone;
-  final String id;
 
-  const RegistrationScreen({super.key, required this.id, required this.phone});
+  const RegistrationScreen({super.key, required this.phone});
 
   @override
   State<StatefulWidget> createState() => _RegistrationScreenState();
@@ -28,14 +27,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final List<String> cities = <String>["Kayseri"];
 
   void completeRegistration() async {
-    final String id = await Manager.createUser(
+    await Manager.createUser(
       nameController.text.trim(),
       surnameController.text.trim(),
       widget.phone,
       selectedCity ?? "",
     );
     if (!mounted) return;
-    _authManager.login(context, id, widget.phone, false);
+    _authManager.login(context, widget.phone, false);
   }
 
   void _recheckButton() {
