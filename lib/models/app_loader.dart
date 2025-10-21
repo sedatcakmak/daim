@@ -258,7 +258,7 @@ class AppLoader {
       _loadCampaigns(),
       _loadOrders(),
       _loadActivities(),
-      _loadStars(),
+      loadStars(),
       _loadNotifications(),
     ];
 
@@ -394,7 +394,7 @@ class AppLoader {
                   if (doc.id == "89342613") {
                     return null;
                   }
-                 */
+                  */
 
                   var data = doc.data() as Map<String, dynamic>;
 
@@ -463,7 +463,7 @@ class AppLoader {
     }
   }
 
-  static Future<void> _loadStars() async {
+  static Future<void> loadStars() async {
     debugPrint("ℹ️ Wallets yükleniyor...");
 
     try {

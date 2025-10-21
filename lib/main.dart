@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:daim/firebase_options.dart';
 import 'package:daim/managers/deeplink_manager.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -66,11 +66,6 @@ void main() {
         );
         await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
 
-        if (!kReleaseMode) {
-          await FirebaseAuth.instance.setSettings(
-            appVerificationDisabledForTesting: true,
-          );
-        }
         debugPrint('Firebase App Check initialized successfully');
       } catch (appCheckError, stack) {
         FirebaseCrashlytics.instance.recordError(

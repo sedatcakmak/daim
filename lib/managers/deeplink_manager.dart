@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:daim/main.dart';
+import 'package:daim/models/app_loader.dart';
 import 'package:daim/models/information.dart';
 import 'package:daim/pages/reward_page.dart';
 import 'package:flutter/material.dart';
@@ -75,6 +76,8 @@ class DeepLinkManager with WidgetsBindingObserver {
       final message = result == true
           ? "✅ Kod doğrulandı ve yıldız verildi!"
           : "❌ Kod geçersiz veya süresi dolmuş.";
+
+      if (result) AppLoader.loadStars();
 
       _navigateToReward(message);
     } catch (e) {

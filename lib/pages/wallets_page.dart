@@ -47,7 +47,7 @@ class WalletsPage extends StatelessWidget {
               icon: Icons.emoji_events,
               title: "Seviye Atla",
               description:
-                  "Daha fazla yıldız toplayarak üyelik seviyeni yükseltebilir, özel ayrıcalıklar kazanabilirsin.",
+                  "Yıldız toplayarak üyelik seviyeni yükseltip özel ayrıcalıklar kazanabilirsin.",
               onTap: () {
                 Navigator.push(
                   context,
