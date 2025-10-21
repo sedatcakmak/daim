@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daim/models/app_loader.dart';
 import 'package:daim/models/information.dart';
@@ -6,6 +8,7 @@ import 'package:daim/models/order_item_model.dart';
 import 'package:daim/models/order_model.dart';
 import 'package:daim/models/restaurant_model.dart';
 import 'package:daim/models/star_model.dart';
+import 'package:daim/pages/home_page.dart';
 import 'package:daim/pages/new_order_page.dart';
 import 'package:daim/widgets/bottom.dart';
 import 'package:daim/widgets/header.dart';
@@ -22,7 +25,14 @@ class OrderPage extends StatefulWidget {
 }
 
 class _OrderPageState extends State<OrderPage> {
-  bool _isProcessing = false; // ✅ Sipariş oluşturuluyor mu?
+  bool _isProcessing = false;
+  StreamSubscription? _listener;
+
+  @override
+  void dispose() {
+    _listener?.cancel();
+    super.dispose();
+  }
 
   void _addItem(MenuItemModel item) {
     setState(() {
@@ -249,6 +259,38 @@ class _OrderPageState extends State<OrderPage> {
                             );
 
                             if (!context.mounted) return;
+                            _listener = FirebaseFirestore.instance
+                                .collection('orders')
+                                .where('order_id', isEqualTo: number)
+                                .snapshots()
+                                .listen((snapshot) async {
+                                  if (snapshot.docs.isNotEmpty) {
+                                    debugPrint(
+                                      "✅ Sipariş onaylandı, orders koleksiyonuna taşındı!",
+                                    );
+
+                                    _listener?.cancel();
+
+                                    await AppLoader.loadOrders();
+                                    await AppLoader.loadStars();
+                                    await AppLoader.loadActivities();
+
+                                    if (!context.mounted) return;
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => HomePage(),
+                                      ),
+                                      (route) => false,
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Siparişin onaylandı!"),
+                                      ),
+                                    );
+                                  }
+                                });
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(

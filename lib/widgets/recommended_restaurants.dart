@@ -13,7 +13,7 @@ class RecommendedRestaurantsWidget extends StatefulWidget {
 }
 
 class _RecommendedRestaurantState extends State<RecommendedRestaurantsWidget> {
-  final PageController _controller = PageController(viewportFraction: 0.92);
+  final PageController _controller = PageController();
 
   final restaurants = Information.restaurants
       .where(

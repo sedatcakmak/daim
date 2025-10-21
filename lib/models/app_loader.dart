@@ -105,6 +105,7 @@ class AppLoader {
     }
 
     await addActivity(
+      phone: Information.phone,
       amount: amount,
       message: "${Information.restaurant!.name} için $amount yıldız kazandın!",
       type: "earned_stars",
@@ -118,7 +119,7 @@ class AppLoader {
     });
   }
 
-  static Future<void> removeStarsByPhone(String phone, int amount) async {
+  static Future<bool> removeStarsByPhone(String phone, int amount) async {
     // Kullanıcıyı phone alanına göre bul
     final userQuery = await FirebaseFirestore.instance
         .collection('users')
@@ -132,31 +133,59 @@ class AppLoader {
 
     final userDocRef = userQuery.docs.first.reference;
 
-    await _updateWalletAndActivity(userDocRef, amount);
+    return await _updateWalletAndActivity(phone, userDocRef, amount);
   }
 
-  static Future<void> _updateWalletAndActivity(
+  static Future<bool> _updateWalletAndActivity(
+    String phone,
     DocumentReference userDocRef,
     int amount,
   ) async {
-    final walletQuery = await userDocRef
-        .collection('wallets')
-        .where('restaurant_id', isEqualTo: Information.restaurant!.id)
-        .limit(1)
-        .get();
+    try {
+      // Kullanıcının cüzdanını bul
+      final walletQuery = await userDocRef
+          .collection('wallets')
+          .where('restaurant_id', isEqualTo: Information.restaurant!.id)
+          .limit(1)
+          .get();
 
-    if (walletQuery.docs.isEmpty) throw Exception("❌ Wallet bulunamadı");
+      // Cüzdan yoksa false döndür
+      if (walletQuery.docs.isEmpty) {
+        debugPrint("❌ Cüzdan bulunamadı.");
+        return false;
+      }
 
-    final walletRef = walletQuery.docs.first.reference;
+      final walletRef = walletQuery.docs.first.reference;
+      final walletData = walletQuery.docs.first.data();
 
-    await addActivity(
-      amount: amount,
-      message: "${Information.restaurant!.name} için $amount yıldız harcadın!",
-      type: "spent_stars",
-    );
+      final currentStars = walletData['current_amount'] ?? 0;
 
-    await walletRef.update({'current_amount': FieldValue.increment(-amount)});
-    debugPrint("✅ $amount yıldız başarıyla harcandı");
+      // Yeterli yıldız yoksa false döndür
+      if (currentStars < amount) {
+        debugPrint(
+          "❌ Yetersiz yıldız! Mevcut: $currentStars, Gerekli: $amount",
+        );
+        return false;
+      }
+
+      // Aktivite ekle
+      await addActivity(
+        phone: phone,
+        amount: amount,
+        message:
+            "${Information.restaurant!.name} için $amount yıldız harcadın!",
+        type: "spent_stars",
+      );
+
+      // Cüzdandan yıldız düş
+      await walletRef.update({'current_amount': FieldValue.increment(-amount)});
+
+      debugPrint("✅ $amount yıldız başarıyla harcandı");
+      return true;
+    } catch (e) {
+      debugPrint("❌ Yıldız harcama hatası: $e");
+      return false;
+    }
   }
 
   static Future<void> checkQR(BuildContext context, String code) async {
@@ -256,8 +285,8 @@ class AppLoader {
     final futures = [
       _loadRestaurants(),
       _loadCampaigns(),
-      _loadOrders(),
-      _loadActivities(),
+      loadOrders(),
+      loadActivities(),
       loadStars(),
       _loadNotifications(),
     ];
@@ -323,6 +352,7 @@ class AppLoader {
       debugPrint("🗑️ Pending sipariş silindi");
 
       await addActivity(
+        phone: order.phone,
         amount: order.price,
         message: "${Information.restaurant!.name} için sipariş oluşturdun!",
         type: "order",
@@ -332,7 +362,7 @@ class AppLoader {
     }
   }
 
-  static Future<void> _loadOrders() async {
+  static Future<void> loadOrders() async {
     debugPrint("bilgi: orders");
 
     try {
@@ -513,6 +543,7 @@ class AppLoader {
   }
 
   static Future<void> addActivity({
+    required String phone,
     required int amount,
     required String message,
     required String type,
@@ -520,7 +551,7 @@ class AppLoader {
     try {
       final qs = await _firestore
           .collection('users')
-          .where('phone', isEqualTo: Information.phone)
+          .where('phone', isEqualTo: phone)
           .limit(1)
           .get();
 
@@ -548,7 +579,7 @@ class AppLoader {
     }
   }
 
-  static Future<void> _loadActivities() async {
+  static Future<void> loadActivities() async {
     debugPrint("bilgi: activities");
 
     final qs = await _firestore
@@ -783,6 +814,7 @@ class AppLoader {
       }
 
       debugPrint("✅ Pending Order Oluşturuldu! Order ID: $orderId");
+
       return orderId;
     } catch (e) {
       debugPrint("❌ Pending Order oluşturulurken hata oluştu: $e");

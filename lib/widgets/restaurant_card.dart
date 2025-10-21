@@ -40,7 +40,7 @@ class _RecommendedRestaurantState extends State<RestaurantCardWidget> {
         const SizedBox(width: 6),
         Text(
           hasRating
-              ? "${rating.toStringAsFixed(1)} (${widget.restaurant.reviews.length} değerlendirme)"
+              ? "${rating.toStringAsFixed(1)} (${widget.restaurant.reviews.length} oy)"
               : '—',
           style: TextStyle(
             fontSize: 13,

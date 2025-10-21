@@ -135,10 +135,23 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
             child: ElevatedButton.icon(
               onPressed: () async {
                 try {
-                  await AppLoader.removeStarsByPhone(
+                  bool status = await AppLoader.removeStarsByPhone(
                     widget.order.phone,
                     widget.order.price,
                   );
+                  if (!status) {
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Sipariş reddedildi!")),
+                    );
+
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => EmployeeHomePage()),
+                      (route) => false,
+                    );
+                    return;
+                  }
                   await AppLoader.movePendingToOrders(widget.order);
 
                   if (!mounted) return;
@@ -146,9 +159,10 @@ class _EmployeeOrderPageState extends State<EmployeeOrderPage> {
                     SnackBar(content: Text("Sipariş başarıyla onaylandı.")),
                   );
 
-                  Navigator.push(
+                  Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (_) => EmployeeHomePage()),
+                    (route) => false,
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
