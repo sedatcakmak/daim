@@ -81,7 +81,3 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics-ndk")
     implementation("com.google.firebase:firebase-analytics")
 }
-
-afterEvaluate {
-    android.defaultConfig.minSdk = 23
-}
