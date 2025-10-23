@@ -99,15 +99,35 @@ class _CampaignsWidgetState extends State<CampaignsWidget> {
         );
       },
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: Colors.white,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(9),
-            child: Image.network(campaign.image, fit: BoxFit.cover),
+        padding: const EdgeInsets.all(10), // kenarlardan 10 px boşluk
+        child: AspectRatio(
+          aspectRatio: 1, // 1x1 kare oranı
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 6,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                campaign.image,
+                fit: BoxFit.cover, // alanı tam doldur, taşanı kırp
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(child: CircularProgressIndicator());
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(child: Icon(Icons.broken_image, size: 40));
+                },
+              ),
+            ),
           ),
         ),
       ),

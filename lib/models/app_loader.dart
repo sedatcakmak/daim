@@ -13,6 +13,7 @@ import 'package:daim/models/restaurant_model.dart';
 import 'package:daim/models/star_model.dart';
 import 'package:daim/pages/employee_order_page.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppLoader {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -297,27 +298,45 @@ class AppLoader {
   static Future<void> _loadUserData() async {
     debugPrint("bilgi: user data");
 
-    final qs = await _firestore
-        .collection('users')
-        .where('phone', isEqualTo: Information.phone)
-        .limit(1)
-        .get();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Information.id = prefs.getString("id") ?? '';
+    if (Information.id.isEmpty) {
+      final qs = await _firestore
+          .collection('users')
+          .where('phone', isEqualTo: Information.phone)
+          .limit(1)
+          .get();
 
-    if (qs.docs.isEmpty) {
-      debugPrint("❌ User bulunamadı ");
-      return;
+      if (qs.docs.isEmpty) {
+        debugPrint("❌ User bulunamadı ");
+        return;
+      }
+
+      final userDoc = qs.docs.first;
+      final data = userDoc.data();
+
+      Information.id = userDoc.id;
+      Information.name = data['name'] ?? '';
+      prefs.setString("name", Information.name);
+
+      Information.surname = data['surname'] ?? '';
+      prefs.setString("surname", Information.surname);
+
+      Information.city = data['city'] ?? '';
+      prefs.setString("city", Information.city);
+
+      Information.userId = data['user_id'] ?? '';
+      prefs.setString("user_id", Information.userId);
+
+      Information.badges = List<String>.from(data['badges'] ?? []);
+      prefs.setStringList("badges", Information.badges);
+    } else {
+      Information.name = prefs.getString("name") ?? '';
+      Information.surname = prefs.getString("surname") ?? '';
+      Information.city = prefs.getString("city") ?? '';
+      Information.userId = prefs.getString("user_id") ?? '';
+      Information.badges = prefs.getStringList("badges") ?? [];
     }
-
-    final userDoc = qs.docs.first;
-    final data = userDoc.data();
-
-    Information.id = userDoc.id;
-    Information.name = data['name'] ?? '';
-    Information.surname = data['surname'] ?? '';
-    Information.city = data['city'] ?? '';
-    Information.phone = data['phone'] ?? '';
-    Information.userId = data['user_id'] ?? '';
-    Information.badges = List<String>.from(data['badges'] ?? []);
 
     debugPrint("bilgi: user data doğrulandı");
   }
@@ -800,6 +819,7 @@ class AppLoader {
         'order_id': orderId,
         'restaurant_id': order.restaurantId,
         'phone': Information.phone,
+        'user_id': Information.userId,
         'price': order.price,
         'created_at': FieldValue.serverTimestamp(),
       });

@@ -1,7 +1,7 @@
 name: daim
 description: "Kafe ve restoranlar için özel tasarlanmış modern sadakat yönetim sistemi!"
 publish_to: 'none'
-version: 1.2.2+21
+version: 1.2.3+22
 
 environment:
   sdk: ^3.9.0

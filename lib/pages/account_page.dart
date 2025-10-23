@@ -153,7 +153,24 @@ class AccountInformation extends StatelessWidget {
               ),
               onPressed: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.remove('phone');
+                await prefs.clear();
+
+                Information.id = "";
+                Information.name = "";
+                Information.surname = "";
+                Information.phone = "";
+                Information.city = "";
+                Information.userId = "";
+
+                Information.isGuest = false;
+                Information.restaurant = null;
+                Information.badges = [];
+                Information.wallets = [];
+                Information.campaigns = [];
+                Information.notifications = [];
+                Information.orders = [];
+                Information.activities = [];
+                Information.restaurants = [];
 
                 if (!context.mounted) return;
                 Navigator.pushAndRemoveUntil(
