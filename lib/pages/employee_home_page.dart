@@ -193,52 +193,56 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
 
   Widget _buildMenuGrid(RestaurantModel r) {
     final menu = r.menu;
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: menu.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.78,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10), // kenar boşlukları
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: menu.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3, // her satırda 3 tane
+          crossAxisSpacing: 8, // öğeler arası yatay boşluk
+          mainAxisSpacing: 12, // dikey boşluk
+          childAspectRatio: 0.8, // oran biraz daha yüksek olursa taşmaz
+        ),
+        itemBuilder: (context, index) {
+          final item = menu[index];
+          return Container(
+            decoration: _boxDecoration(),
+            padding: const EdgeInsets.all(6), // içeriden biraz daralttık
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      item.image,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.broken_image, size: 40),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  item.name,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text("${item.price} ⭐", style: const TextStyle(fontSize: 12.5)),
+              ],
+            ),
+          );
+        },
       ),
-      itemBuilder: (context, index) {
-        final item = menu[index];
-        return Container(
-          decoration: _boxDecoration(),
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-          child: Column(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  item.image,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                item.name,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w600,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 2),
-              Text(
-                "${item.price} ⭐",
-                style: TextStyle(fontSize: 13, color: AppColors.black),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 
