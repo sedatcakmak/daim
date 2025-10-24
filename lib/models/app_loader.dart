@@ -300,7 +300,7 @@ class AppLoader {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Information.id = prefs.getString("id") ?? '';
-    if (Information.id.isEmpty) {
+    if (Information.id.isEmpty || Information.name.isEmpty) {
       final qs = await _firestore
           .collection('users')
           .where('phone', isEqualTo: Information.phone)
@@ -316,6 +316,8 @@ class AppLoader {
       final data = userDoc.data();
 
       Information.id = userDoc.id;
+      prefs.setString("id", userDoc.id);
+
       Information.name = data['name'] ?? '';
       prefs.setString("name", Information.name);
 
