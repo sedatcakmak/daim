@@ -23,6 +23,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -33,8 +34,8 @@ android {
         applicationId = "com.cakmakstudios.daim"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
-        versionCode = 42
-        versionName = "1.2.3"
+        versionCode = 44
+        versionName = "1.3.0"
 
         ndk {
             abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
@@ -63,8 +64,8 @@ android {
             )
         }
         debug {
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
 }
@@ -74,10 +75,18 @@ flutter {
 }
 
 dependencies {
+    // 🔥 Firebase BoM ve ana kütüphaneler
     implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.android.play:feature-delivery:2.1.0")
-    implementation("com.google.android.play:integrity:1.4.0")
-    implementation("com.google.firebase:firebase-crashlytics-ndk")
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
+
+    // 💬 Bildirim sistemi
+    implementation("com.google.android.play:integrity:1.4.0")
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+
+    // ✅ Java 8+ API’larını tüm cihazlarda çalıştırmak için
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }

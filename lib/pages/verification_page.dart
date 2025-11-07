@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daim/main.dart';
-import 'package:daim/pages/register_page.dart';
-import 'package:daim/pages/type_page.dart';
-import 'package:daim/managers/auth_manager.dart';
+import 'package:daim/models/app_loader.dart';
 import 'package:daim/pages/welcome_page.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,7 +18,6 @@ class OTPVerificationScreen extends StatefulWidget {
 
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   final TextEditingController otpController = TextEditingController();
-  final AuthManager _authManager = AuthManager();
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   bool isButtonEnabled = false;
@@ -97,52 +94,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         }
 
         try {
-          final phone = widget.phone;
-          if (phone.isEmpty) {
-            _showSnack('Telefon numarası bulunamadı.');
-            isButtonEnabled = true;
-            return;
+          bool status = await AppLoader.handleLogin(context, widget.phone);
+          if (status) {
+            _showSnack('Başarıyla doğruladın!');
+          } else {
+            _showSnack('Giriş tamamlanamadı!');
           }
-
-          final employeeSnap = await firestore
-              .collection('employees')
-              .where('phone', isEqualTo: phone)
-              .limit(1)
-              .get();
-
-          final userSnap = await firestore
-              .collection('users')
-              .where('phone', isEqualTo: phone)
-              .limit(1)
-              .get();
-
-          final hasEmployee = employeeSnap.docs.isNotEmpty;
-          final hasUser = userSnap.docs.isNotEmpty;
-
-          if (!mounted) {
-            isButtonEnabled = true;
-            return;
-          }
-
-          if (hasEmployee && hasUser) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => TypePage(phone: phone)),
-              (route) => false,
-            );
-            return;
-          }
-
-          if (hasEmployee || hasUser) {
-            _authManager.login(context, phone, hasEmployee);
-            return;
-          }
-
-          _showSnack('Başarıyla doğruladın!');
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => RegistrationScreen(phone: phone)),
-          );
         } catch (e, stack) {
           isButtonEnabled = true;
           FirebaseCrashlytics.instance.recordError(e, stack, fatal: true);

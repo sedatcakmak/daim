@@ -1,5 +1,5 @@
+import 'package:daim/models/app_loader.dart';
 import 'package:daim/models/information.dart';
-import 'package:daim/models/manager.dart';
 import 'package:daim/models/order_model.dart';
 import 'package:flutter/material.dart';
 
@@ -141,7 +141,7 @@ class _OrderReviewPopupState extends State<OrderReviewPopup> {
                   return;
                 }
 
-                await Manager.addReview(
+                await AppLoader.addReview(
                   restaurantId: restaurant.id,
                   comment: reviewController.text,
                   rating: rating,

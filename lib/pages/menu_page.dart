@@ -218,7 +218,7 @@ class _MenuPageState extends State<MenuPage> {
                     item.description,
                     style: TextStyle(fontSize: 12, color: Colors.grey[700]),
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+                    maxLines: 2,
                   ),
                 ],
               ),
@@ -328,17 +328,6 @@ class _MenuPageState extends State<MenuPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Icon(Icons.access_time, size: 18, color: Colors.grey),
-                    SizedBox(width: 6),
-                    Text(
-                      "Çalışma Saatleri: ${widget.restaurant.hours}",
-                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 6),
                 GestureDetector(
                   onTap: () async {
                     final Uri uri = Uri.parse(widget.restaurant.link);
@@ -358,11 +347,11 @@ class _MenuPageState extends State<MenuPage> {
                   },
                   child: Row(
                     children: [
-                      Icon(Icons.link, size: 18, color: AppColors.black),
+                      Icon(Icons.link, size: 18, color: Colors.blue),
                       SizedBox(width: 6),
                       Text(
                         "İşletme Menüsünü Görüntüle",
-                        style: TextStyle(color: AppColors.black, fontSize: 14),
+                        style: TextStyle(color: Colors.blue, fontSize: 14),
                       ),
                     ],
                   ),
@@ -413,15 +402,12 @@ class _MenuPageState extends State<MenuPage> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.location_on, size: 18, color: AppColors.black),
+                      Icon(Icons.location_on, size: 18, color: Colors.blue),
                       SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           widget.restaurant.address,
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: Colors.blue, fontSize: 14),
                           softWrap: true,
                           overflow: TextOverflow.visible,
                           maxLines: null,
@@ -430,13 +416,24 @@ class _MenuPageState extends State<MenuPage> {
                     ],
                   ),
                 ),
+                SizedBox(height: 6),
+                Row(
+                  children: [
+                    Icon(Icons.access_time, size: 18, color: Colors.grey),
+                    SizedBox(width: 6),
+                    Text(
+                      "Çalışma Saatleri: ${widget.restaurant.hours}",
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                  ],
+                ),
                 SizedBox(height: 18),
                 Row(
                   children: [
                     Icon(Icons.money, size: 18, color: Colors.grey),
                     SizedBox(width: 6),
                     Text(
-                      "Her siparişten ${widget.restaurant.stars} ⭐ kazanırsın.",
+                      "Her siparişten ${widget.restaurant.stars} ⭐ kazanırsın!",
                       style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                     ),
                   ],
@@ -452,6 +449,7 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                   ],
                 ),
+                /*
                 SizedBox(height: 6),
                 Row(
                   children: [
@@ -463,6 +461,7 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                   ],
                 ),
+                */
               ],
             ),
           ),

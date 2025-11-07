@@ -94,7 +94,7 @@ class _QRPageState extends State<QRPage> {
                 if (Information.isGuest)
                   Positioned.fill(
                     child: Container(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       child: Center(
                         child: Text(
                           "QR okutmak için giriş yapmalısın",

@@ -7,11 +7,11 @@ import 'package:daim/models/star_model.dart';
 
 class Information {
   static String id = "";
-  static String name = "";
-  static String surname = "";
   static String phone = "";
-  static String city = "";
   static String userId = "";
+
+  static String employeeName = "";
+  static String employeeSurname = "";
 
   static bool isGuest = false;
 

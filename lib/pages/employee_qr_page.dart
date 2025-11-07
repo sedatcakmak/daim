@@ -183,6 +183,7 @@ class _EmployeeQRPageState extends State<EmployeeQRPage> {
               Expanded(
                 child: TextField(
                   controller: _textController,
+                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     labelText: "QR kodu yaz / yapıştır",
                     border: OutlineInputBorder(),

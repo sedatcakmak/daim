@@ -8,43 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class DeepLinkManager with WidgetsBindingObserver {
-  static final DeepLinkManager _instance = DeepLinkManager._internal();
-  factory DeepLinkManager() => _instance;
-  DeepLinkManager._internal();
-
-  String? _pendingLink;
-  bool _isAppReady = false;
-
-  void init() {
-    WidgetsBinding.instance.addObserver(this);
-  }
-
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
   }
 
   Future<void> handleDeepLink(String link) async {
     debugPrint("🎯 Deep link geldi: $link");
-    _pendingLink = link;
 
-    if (_isAppReady) {
-      _processLink();
-    }
+    _processLink(link);
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _isAppReady = true;
-      if (_pendingLink != null) {
-        _processLink();
-        _pendingLink = null;
-      }
-    }
-  }
-
-  Future<void> _processLink() async {
-    final uri = Uri.tryParse(_pendingLink ?? '');
+  Future<void> _processLink(String link) async {
+    final uri = Uri.tryParse(link);
     if (uri == null) return;
 
     final host = uri.host.toLowerCase();

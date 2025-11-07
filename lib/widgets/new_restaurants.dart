@@ -15,13 +15,7 @@ class NewRestaurantsWidget extends StatefulWidget {
 class _NewRestaurantState extends State<NewRestaurantsWidget> {
   final PageController _controller = PageController(viewportFraction: 0.92);
 
-  final restaurants = Information.restaurants
-      .where(
-        (r) =>
-            r.isNew &&
-            r.address.toLowerCase().contains(Information.city.toLowerCase()),
-      )
-      .toList();
+  final restaurants = Information.restaurants.where((r) => r.isNew).toList();
 
   @override
   Widget build(BuildContext context) {

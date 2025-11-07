@@ -1,16 +1,16 @@
 import 'package:daim/main.dart';
+import 'package:daim/pages/all_campaigns_page.dart';
+import 'package:flutter/material.dart';
 import 'package:daim/models/campaign_model.dart';
 import 'package:daim/models/information.dart';
-import 'package:daim/pages/all_campaigns_page.dart';
 import 'package:daim/pages/campaign_details_page.dart';
-import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class CampaignsWidget extends StatefulWidget {
   const CampaignsWidget({super.key});
 
   @override
-  State<StatefulWidget> createState() => _CampaignsWidgetState();
+  State<CampaignsWidget> createState() => _CampaignsWidgetState();
 }
 
 class _CampaignsWidgetState extends State<CampaignsWidget> {
@@ -18,22 +18,27 @@ class _CampaignsWidgetState extends State<CampaignsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final campaigns = Information.campaigns;
+    final screenWidth = MediaQuery.of(context).size.width * 0.95;
+
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Row(
             children: [
-              Text(
+              const Text(
                 "Kampanyalar",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              Spacer(),
+              const Spacer(),
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => CampaignListPage()),
+                    MaterialPageRoute(
+                      builder: (context) => const CampaignListPage(),
+                    ),
                   );
                 },
                 child: Row(
@@ -59,76 +64,60 @@ class _CampaignsWidgetState extends State<CampaignsWidget> {
           ),
         ),
         SizedBox(
-          width: 400,
-          height: 300,
-          child: PageView(
+          width: screenWidth,
+          height: screenWidth, // 1:1 oran
+          child: PageView.builder(
             controller: _controller,
-            children: Information.campaigns
-                .map((campaign) => _buildCampaignImage(campaign, context))
-                .toList(),
+            itemCount: campaigns.length,
+            itemBuilder: (context, index) {
+              final campaign = campaigns[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: _buildCampaignImage(campaign),
+              );
+            },
           ),
         ),
-        SizedBox(height: 10),
-        Center(
-          child: SmoothPageIndicator(
-            controller: _controller,
-            count: Information.campaigns.isNotEmpty
-                ? Information.campaigns.length
-                : 1,
-            effect: WormEffect(
-              dotHeight: 8,
-              dotWidth: 22,
-              activeDotColor: AppColors.black,
-              dotColor: AppColors.gray,
-              spacing: 7,
-            ),
+        const SizedBox(height: 10),
+        SmoothPageIndicator(
+          controller: _controller,
+          count: campaigns.isNotEmpty ? campaigns.length : 1,
+          effect: const WormEffect(
+            dotHeight: 8,
+            dotWidth: 22,
+            activeDotColor: Colors.black,
+            dotColor: Colors.grey,
+            spacing: 7,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildCampaignImage(CampaignModel campaign, BuildContext context) {
+  Widget _buildCampaignImage(CampaignModel campaign) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CampaignDetailPage(campaign: campaign),
+            builder: (_) => CampaignDetailPage(campaign: campaign),
           ),
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.all(10), // kenarlardan 10 px boşluk
-        child: AspectRatio(
-          aspectRatio: 1, // 1x1 kare oranı
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 6,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                campaign.image,
-                fit: BoxFit.cover, // alanı tam doldur, taşanı kırp
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(child: CircularProgressIndicator());
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Center(child: Icon(Icons.broken_image, size: 40));
-                },
-              ),
-            ),
-          ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.network(
+          campaign.image,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return const Center(child: CircularProgressIndicator());
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(child: Icon(Icons.broken_image, size: 40));
+          },
         ),
       ),
     );

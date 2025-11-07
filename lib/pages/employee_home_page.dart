@@ -20,7 +20,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
   Widget build(BuildContext context) {
     final r = restaurant!;
     return Scaffold(
-      appBar: CustomEmployeeAppBar(title: 'Hoşgeldin, ${Information.name}'),
+      appBar: CustomEmployeeAppBar(title: 'Hoşgeldin!'),
       bottomNavigationBar: CustomEmployeeBottomNavBar(currentIndex: 0),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -78,7 +78,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${Information.name} ${Information.surname}",
+                  "${Information.employeeName} ${Information.employeeSurname}",
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
