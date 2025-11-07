@@ -34,8 +34,8 @@ android {
         applicationId = "com.cakmakstudios.daim"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
-        versionCode = 44
-        versionName = "1.3.0"
+        versionCode = 45
+        versionName = "1.3.1"
 
         ndk {
             abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")

@@ -78,7 +78,5 @@
 		<string>Bluetooth, cihaz bağlantılarını yönetmek için gereklidir.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>QR kodu taramak için kamera erişimi gereklidir.</string>
-		<key>NSUserTrackingUsageDescription</key>
-		<string>Kampanya ve ödül bildirimlerini gösterebilmek için izninize ihtiyacımız var.</string>
 	</dict>
 </plist>
