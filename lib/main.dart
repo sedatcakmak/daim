@@ -1,54 +1,101 @@
 import 'dart:async';
-
 import 'package:daim/firebase_options.dart';
-import 'package:daim/managers/deeplink_manager.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:daim/localization/language_provider.dart';
 import 'package:daim/localization/app_localizations.dart';
 import 'package:daim/pages/splash_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode, PlatformDispatcher;
-import 'package:app_links/app_links.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint("📩 Background mesaj alındı: ${message.notification?.title}");
+}
+
+Future<void> _createNotificationChannel() async {
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'default_channel_id',
+    'Genel Bildirimler',
+    description: 'Daim uygulaması için varsayılan bildirim kanalı',
+    importance: Importance.high,
+  );
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin
+      >()
+      ?.createNotificationChannel(channel);
+}
 
 class AppColors {
   static bool get isDark => false;
-  /*
-  static bool get isDark =>
-      WidgetsBinding.instance.platformDispatcher.platformBrightness ==
-      Brightness.dark;
-  */
 
-  static Color get background =>
-      isDark ? Color(0xFF000000) : Color.fromARGB(255, 242, 242, 247);
-
-  static Color get white => isDark ? Color(0xFF171717) : Color(0xFFFFFFFF);
-
-  static Color get black =>
-      isDark ? Color.fromARGB(255, 229, 229, 234) : Color(0xFF000000);
-
+  static Color get background => isDark
+      ? const Color(0xFF000000)
+      : const Color.fromARGB(255, 242, 242, 247);
+  static Color get white =>
+      isDark ? const Color(0xFF171717) : const Color(0xFFFFFFFF);
+  static Color get black => isDark
+      ? const Color.fromARGB(255, 229, 229, 234)
+      : const Color(0xFF000000);
   static Color get gray => isDark
-      ? Color.fromARGB(255, 199, 199, 204)
-      : Color.fromARGB(153, 60, 60, 67);
+      ? const Color.fromARGB(255, 199, 199, 204)
+      : const Color.fromARGB(153, 60, 60, 67);
+}
+
+Future<void> _setupFirebaseMessaging() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // Bildirim izni iste
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  debugPrint('🔔 Notification permission: ${settings.authorizationStatus}');
+
+  String? token = await messaging.getToken();
+  debugPrint('📱 FCM Token: $token');
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    debugPrint('📩 Yeni bildirim geldi!');
+    debugPrint('Başlık: ${message.notification?.title}');
+    debugPrint('İçerik: ${message.notification?.body}');
+  });
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 }
 
 void main() {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-      DeepLinkManager().init();
 
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
       debugPrint('Firebase initialized successfully');
+
+      await _createNotificationChannel();
+      await _setupFirebaseMessaging();
 
       FlutterError.onError =
           FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -59,13 +106,14 @@ void main() {
 
       try {
         await FirebaseAppCheck.instance.activate(
-          androidProvider: kReleaseMode
-              ? AndroidProvider.playIntegrity
-              : AndroidProvider.debug,
-          appleProvider: AppleProvider.appAttestWithDeviceCheckFallback,
+          providerAndroid: kReleaseMode
+              ? const AndroidPlayIntegrityProvider()
+              : const AndroidDebugProvider(),
+          providerApple: kReleaseMode
+              ? const AppleAppAttestProvider()
+              : const AppleDebugProvider(),
         );
         await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
-
         debugPrint('Firebase App Check initialized successfully');
       } catch (appCheckError, stack) {
         FirebaseCrashlytics.instance.recordError(
@@ -101,37 +149,6 @@ class DaimApp extends StatefulWidget {
 }
 
 class _DaimAppState extends State<DaimApp> {
-  late final AppLinks _appLinks;
-
-  @override
-  void initState() {
-    super.initState();
-    _initDeepLinks();
-    _checkInitialLink();
-  }
-
-  Future<void> _checkInitialLink() async {
-    final initialUri = await AppLinks().getInitialLink();
-    if (initialUri != null) {
-      debugPrint("📥 Initial deep link: $initialUri");
-      DeepLinkManager().handleDeepLink(initialUri.toString());
-    }
-  }
-
-  void _initDeepLinks() {
-    _appLinks = AppLinks();
-
-    _appLinks.uriLinkStream.listen(
-      (uri) {
-        debugPrint("🎯 Deep link geldi: ${uri.toString()}");
-        DeepLinkManager().handleDeepLink(uri.toString());
-      },
-      onError: (err) {
-        debugPrint('❌ Deep link error: $err');
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<LanguageProvider>(
@@ -168,9 +185,9 @@ class _DaimAppState extends State<DaimApp> {
             inputDecorationTheme: InputDecorationTheme(
               filled: true,
               fillColor: AppColors.white,
-              border: OutlineInputBorder(),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: AppColors.white, width: 2),
+              border: const OutlineInputBorder(),
+              focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black, width: 2),
               ),
               labelStyle: TextStyle(color: AppColors.black),
             ),

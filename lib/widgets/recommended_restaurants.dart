@@ -16,11 +16,7 @@ class _RecommendedRestaurantState extends State<RecommendedRestaurantsWidget> {
   final PageController _controller = PageController();
 
   final restaurants = Information.restaurants
-      .where(
-        (r) =>
-            r.isRecommended &&
-            r.address.toLowerCase().contains(Information.city.toLowerCase()),
-      )
+      .where((r) => r.isRecommended)
       .toList();
 
   @override
@@ -32,7 +28,6 @@ class _RecommendedRestaurantState extends State<RecommendedRestaurantsWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Row(

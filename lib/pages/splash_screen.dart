@@ -1,4 +1,11 @@
+import 'dart:io';
+
+import 'package:daim/main.dart';
 import 'package:daim/managers/auth_manager.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+// ignore: depend_on_referenced_packages
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -23,28 +30,30 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
+  /// 🔹 Uygulama açıldığında çağrılır
   Future<void> _initializeApp() async {
     try {
-      debugPrint('SplashScreen: Starting auto login...');
+      debugPrint('SplashScreen: Starting initialization...');
 
-      // Add a small delay to ensure everything is loaded
       await Future.delayed(const Duration(milliseconds: 500));
 
-      if (!mounted) return;
+      // 🔸 1. Firebase Remote Config sürüm kontrolü
+      bool shouldContinue = await _checkAppVersion();
+      if (!shouldContinue || !mounted) return;
 
+      // 🔸 2. Otomatik giriş
       await _authManager.autoLogin(context);
       debugPrint('SplashScreen: Auto login completed');
     } catch (e) {
       debugPrint('SplashScreen: Error during initialization: $e');
 
       if (!mounted) return;
-
       setState(() {
         _hasError = true;
         _errorMessage = e.toString();
       });
 
-      // Show error for a few seconds, then try to continue
+      // Birkaç saniye sonra fallback navigasyon
       Future.delayed(const Duration(seconds: 3), () {
         if (mounted && _hasError) {
           _showFallbackNavigation();
@@ -53,9 +62,77 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
+  /// 🔹 Firebase Remote Config sürüm kontrolü
+  Future<bool> _checkAppVersion() async {
+    try {
+      final remoteConfig = FirebaseRemoteConfig.instance;
+
+      await remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(seconds: 10),
+          minimumFetchInterval: Duration.zero,
+        ),
+      );
+
+      await remoteConfig.fetchAndActivate();
+
+      final minVersion =
+          int.tryParse(remoteConfig.getString('minimum_version_code')) ??
+          remoteConfig.getInt('minimum_version_code');
+
+      final updateUrl = Platform.isIOS
+          ? remoteConfig.getString('update_url_ios')
+          : remoteConfig.getString('update_url_android');
+
+      final packageInfo = await PackageInfo.fromPlatform();
+      final currentVersionCode = int.tryParse(packageInfo.buildNumber) ?? 0;
+
+      debugPrint(
+        "📱 App Version: $currentVersionCode | Min Required: $minVersion",
+      );
+
+      if (currentVersionCode < minVersion) {
+        if (!mounted) return false;
+
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            title: const Text("Yeni sürüm gerekli"),
+            content: const Text(
+              "Uygulamanın yeni bir sürümü mevcut.\nDevam etmek için güncelleme yapmalısın.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  if (await canLaunchUrl(Uri.parse(updateUrl))) {
+                    await launchUrl(
+                      Uri.parse(updateUrl),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  }
+                },
+                child: Text(
+                  "Güncelle",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.black),
+                ),
+              ),
+            ],
+          ),
+        );
+
+        return false; // Güncelleme yapılmadan devam etmesin
+      }
+
+      return true; // Devam et
+    } catch (e) {
+      debugPrint("⚠️ Remote Config Error: $e");
+      return true; // Hata olsa bile kullanıcıyı engelleme
+    }
+  }
+
   void _showFallbackNavigation() {
-    // Navigate to a fallback screen (like welcome/login page)
-    // Replace this with your actual fallback navigation
     Navigator.pushReplacementNamed(context, '/welcome');
   }
 
@@ -106,9 +183,13 @@ class _SplashScreenState extends State<SplashScreen> {
               if (_hasError)
                 Column(
                   children: [
-                    Icon(Icons.error_outline, color: Colors.red, size: 48),
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 48,
+                    ),
                     const SizedBox(height: 16),
-                    Text(
+                    const Text(
                       'Bir hata oluştu',
                       style: TextStyle(
                         fontSize: 18,
@@ -144,7 +225,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
               const SizedBox(height: 40),
 
-              // Add version info for debugging (optional)
               if (_hasError)
                 Text(
                   'Hata: ${_errorMessage.length > 100 ? '${_errorMessage.substring(0, 100)}...' : _errorMessage}',

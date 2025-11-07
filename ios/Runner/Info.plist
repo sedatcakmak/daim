@@ -45,35 +45,40 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
+
+		<!-- 🔧 Performans ve App Life-cycle -->
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
-		<key>UIStatusBarHidden</key>
-		<true/>
-		<key>CFBundleURLTypes</key>
-		<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-			<string>daimapp</string>
-			<string>app-1-1041416288073-ios-0cdd121f3121791d618c98</string>
-			</array>
-		</dict>
-		</array>
-		<key>FirebaseAppDelegateProxyEnabled</key>
-		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+		<key>UIStatusBarHidden</key>
+		<true/>
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
+
+		<!-- 🔥 Firebase & Push Notification Ayarları -->
+		<key>FirebaseScreenReportingEnabled</key>
+		<false/>
+		<key>FirebaseAppDelegateProxyEnabled</key>
+		<true/>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>fetch</string>
+			<string>remote-notification</string>
+		</array>
+
+		<!-- 📍 İzin Açıklamaları -->
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>Konumunuzu, size en yakın kafe ve restoranları gösterebilmek için kullanıyoruz.</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Yakın konum tabanlı özellikler için gerekli.</string>
 		<key>NSBluetoothAlwaysUsageDescription</key>
 		<string>Bluetooth, cihaz bağlantılarını yönetmek için gereklidir.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>QR kodu taramak için kamera erişimi gereklidir.</string>
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>Yakın konum tabanlı özellikler için gerekli.</string>
+		<key>NSUserTrackingUsageDescription</key>
+		<string>Kampanya ve ödül bildirimlerini gösterebilmek için izninize ihtiyacımız var.</string>
 	</dict>
 </plist>

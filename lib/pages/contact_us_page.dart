@@ -115,7 +115,7 @@ class ContactUsState extends State<ContactUs> {
   void openEmail() async {
     Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: 'support@daimapp.com',
+      path: 'admin@daimapp.com',
       queryParameters: {'subject': selectedTopic},
     );
 
@@ -255,7 +255,7 @@ class ContactUsState extends State<ContactUs> {
                     Icon(Icons.email, color: AppColors.black, size: 24),
                     SizedBox(width: 8),
                     Text(
-                      "support@daimapp.com",
+                      "admin@daimapp.com",
                       style: TextStyle(fontSize: 16, color: AppColors.black),
                     ),
                   ],

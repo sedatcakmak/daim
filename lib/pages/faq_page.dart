@@ -1,3 +1,4 @@
+import 'package:daim/main.dart';
 import 'package:flutter/material.dart';
 import 'package:daim/widgets/bottom.dart';
 import 'package:daim/widgets/header.dart';
@@ -98,7 +99,7 @@ class _FAQState extends State<FAQ> {
                             isExpandedList[index]
                                 ? Icons.keyboard_arrow_up
                                 : Icons.keyboard_arrow_down,
-                            color: Colors.blue,
+                            color: AppColors.black,
                           ),
                         ],
                       ),

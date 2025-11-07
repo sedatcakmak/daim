@@ -1,4 +1,4 @@
-import 'package:daim/models/manager.dart';
+import 'package:daim/models/app_loader.dart';
 import 'package:daim/models/order_model.dart';
 import 'package:daim/models/restaurant_model.dart';
 import 'package:daim/pages/order_details.dart';
@@ -79,7 +79,7 @@ class LastOrderCard extends StatelessWidget {
               }),
               SizedBox(height: 7),
               _buildButton("Değerlendir", Colors.orange, () async {
-                if (await Manager.isReviewed(
+                if (await AppLoader.isReviewed(
                   restaurantId: restaurantModel.id,
                   orderId: orderModel.id,
                 )) {

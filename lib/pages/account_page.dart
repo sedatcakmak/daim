@@ -156,10 +156,7 @@ class AccountInformation extends StatelessWidget {
                 await prefs.clear();
 
                 Information.id = "";
-                Information.name = "";
-                Information.surname = "";
                 Information.phone = "";
-                Information.city = "";
                 Information.userId = "";
 
                 Information.isGuest = false;

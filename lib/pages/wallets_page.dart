@@ -2,7 +2,6 @@ import 'package:daim/main.dart';
 import 'package:daim/pages/menu_page.dart';
 import 'package:daim/pages/qr_page.dart';
 import 'package:daim/pages/restaurants_page.dart';
-import 'package:daim/pages/membership_page.dart';
 import 'package:flutter/material.dart';
 import 'package:daim/widgets/bottom.dart';
 import 'package:daim/widgets/header.dart';
@@ -43,6 +42,7 @@ class WalletsPage extends StatelessWidget {
                 );
               },
             ),
+            /*
             _buildInfoCard(
               icon: Icons.emoji_events,
               title: "Seviye Atla",
@@ -55,6 +55,7 @@ class WalletsPage extends StatelessWidget {
                 );
               },
             ),
+            */
             const SizedBox(height: 12),
             Text(
               "Yıldız Kazandığın Kafeler",

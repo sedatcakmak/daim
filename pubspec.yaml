@@ -1,7 +1,7 @@
 name: daim
 description: "Kafe ve restoranlar için özel tasarlanmış modern sadakat yönetim sistemi!"
 publish_to: 'none'
-version: 1.2.3+22
+version: 1.3.0+44
 
 environment:
   sdk: ^3.9.0
@@ -39,12 +39,12 @@ dependencies:
   qr_flutter: ^4.1.0
   mobile_scanner: ^7.0.1
 
-  # Deep links
-  app_links: ^6.3.2
-
   # Launcher & Splash
   url_launcher: ^6.3.2
   flutter_native_splash: ^2.4.4
+  firebase_remote_config: ^6.1.1
+  firebase_messaging: ^16.0.4
+  flutter_local_notifications: ^19.5.0
 
 dev_dependencies:
   flutter_test:

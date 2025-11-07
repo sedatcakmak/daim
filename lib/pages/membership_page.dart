@@ -1,5 +1,4 @@
 import 'package:daim/models/information.dart';
-import 'package:daim/models/manager.dart';
 import 'package:flutter/material.dart';
 import 'package:daim/widgets/bottom.dart';
 import 'package:daim/widgets/header.dart';
@@ -11,9 +10,19 @@ class Membership extends StatelessWidget {
 
   Membership({super.key});
 
+  static Map<String, dynamic> getMembership(int total) {
+    if (total >= 50) {
+      return {"name": "Elmas Üye", "required": 0};
+    } else if (total >= 25) {
+      return {"name": "Altın Üye", "required": 50};
+    } else {
+      return {"name": "Gümüş Üye", "required": 25};
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> membership = Manager.getMembership(total);
+    Map<String, dynamic> membership = getMembership(total);
     String name = membership["name"];
     int required = membership["required"];
 

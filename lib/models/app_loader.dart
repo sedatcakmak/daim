@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daim/managers/auth_manager.dart';
 import 'package:daim/managers/deeplink_manager.dart';
 import 'package:daim/models/activity_model.dart';
 import 'package:daim/models/campaign_model.dart';
@@ -12,6 +13,9 @@ import 'package:daim/models/pending_order_model.dart';
 import 'package:daim/models/restaurant_model.dart';
 import 'package:daim/models/star_model.dart';
 import 'package:daim/pages/employee_order_page.dart';
+import 'package:daim/pages/home_page.dart';
+import 'package:daim/pages/type_page.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,9 +41,9 @@ class AppLoader {
       final employeeSnapshot = employeeQuery.docs.first;
 
       final data = employeeSnapshot.data();
-      Information.name = data['name'] ?? '';
-      Information.surname = data['surname'] ?? '';
       Information.phone = data['phone'] ?? '';
+      Information.employeeName = data['name'] ?? '';
+      Information.employeeSurname = data['surname'] ?? '';
 
       RestaurantModel? restaurant = await _loadRestaurantById(
         data['restaurant_id'] ?? '',
@@ -80,44 +84,6 @@ class AppLoader {
       debugPrint("HATA BULUNDU: RESTORANT $e");
       return null;
     }
-  }
-
-  static Future<void> addCurrentStars(String restaurantId, int amount) async {
-    final walletQuery = await FirebaseFirestore.instance
-        .collection('users')
-        .where('phone', isEqualTo: Information.phone)
-        .limit(1)
-        .get();
-
-    if (walletQuery.docs.isEmpty) {
-      throw Exception("Kullanıcı bulunamadı");
-    }
-
-    final userDoc = walletQuery.docs.first.reference;
-
-    final walletDoc = await userDoc
-        .collection('wallets')
-        .where('restaurant_id', isEqualTo: restaurantId)
-        .limit(1)
-        .get();
-
-    if (walletDoc.docs.isEmpty) {
-      throw Exception("Wallet bulunamadı");
-    }
-
-    await addActivity(
-      phone: Information.phone,
-      amount: amount,
-      message: "${Information.restaurant!.name} için $amount yıldız kazandın!",
-      type: "earned_stars",
-    );
-
-    final walletRef = walletDoc.docs.first.reference;
-
-    await walletRef.update({
-      'current_amount': FieldValue.increment(amount),
-      'total_amount': FieldValue.increment(amount),
-    });
   }
 
   static Future<bool> removeStarsByPhone(String phone, int amount) async {
@@ -201,15 +167,125 @@ class AppLoader {
     }
 
     DeepLinkManager().handleDeepLink(code);
+  }
 
-    /*
+  static Future<bool> handleLogin(BuildContext context, String phone) async {
+    try {
+      if (phone.isEmpty) {
+        return false;
+      }
 
-    ScaffoldMessenger.of(context).clearSnackBars();
+      final employeeSnap = await _firestore
+          .collection('employees')
+          .where('phone', isEqualTo: phone)
+          .limit(1)
+          .get();
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text("Kod bulunamadı!")));
-    */
+      final userSnap = await _firestore
+          .collection('users')
+          .where('phone', isEqualTo: phone)
+          .limit(1)
+          .get();
+
+      final hasEmployee = employeeSnap.docs.isNotEmpty;
+      final hasUser = userSnap.docs.isNotEmpty;
+
+      if (!context.mounted) {
+        return false;
+      }
+
+      if (hasEmployee && hasUser) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => TypePage(phone: phone)),
+          (route) => false,
+        );
+        return true;
+      }
+
+      if (hasEmployee || hasUser) {
+        await AuthManager().login(context, phone, hasEmployee);
+        return true;
+      }
+
+      await _registerUser(phone);
+      await AuthManager().login(context, phone, hasEmployee);
+
+      if (!context.mounted) return false;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => HomePage()),
+        (route) => false,
+      );
+      return true;
+    } catch (e, stack) {
+      FirebaseCrashlytics.instance.recordError(e, stack, fatal: true);
+      return false;
+    }
+  }
+
+  static Future<void> _registerUser(String phone) async {
+    final firestore = FirebaseFirestore.instance;
+
+    await firestore.collection('users').doc().set({
+      'phone': phone,
+      'user_id': generateRandomId(),
+      'register': Timestamp.now(),
+      'total_balance': 0.0,
+      'current_balance': 0.0,
+      'badges': [],
+    });
+  }
+
+  static Future<bool> isReviewed({
+    required String restaurantId,
+    required String orderId,
+  }) async {
+    QuerySnapshot existingReview = await FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(restaurantId)
+        .collection('reviews')
+        .where('order_id', isEqualTo: orderId)
+        .get();
+
+    if (existingReview.docs.isNotEmpty) {
+      debugPrint("Bu sipariş için zaten bir değerlendirme yapılmış.");
+      return true;
+    }
+
+    return false;
+  }
+
+  static Future<bool> addReview({
+    required String restaurantId,
+    required String comment,
+    required int rating,
+    required String orderId,
+  }) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantId)
+          .collection('reviews')
+          .add({
+            'comment': comment,
+            'rating': rating,
+            'order_id': orderId,
+            'date': FieldValue.serverTimestamp(),
+          });
+
+      Information.restaurants
+          .where((element) => element.id == restaurantId)
+          .first
+          .reviews
+          .add(rating);
+
+      debugPrint("Yorum başarıyla eklendi.");
+      return true;
+    } catch (e) {
+      debugPrint("Yorum eklenirken hata oluştu: $e");
+      return false;
+    }
   }
 
   static Future<PendingOrderModel?> getPendingOrderById(String docId) async {
@@ -300,7 +376,7 @@ class AppLoader {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Information.id = prefs.getString("id") ?? '';
-    if (Information.id.isEmpty || Information.name.isEmpty) {
+    if (Information.id.isEmpty || Information.phone.isEmpty) {
       final qs = await _firestore
           .collection('users')
           .where('phone', isEqualTo: Information.phone)
@@ -318,24 +394,12 @@ class AppLoader {
       Information.id = userDoc.id;
       prefs.setString("id", userDoc.id);
 
-      Information.name = data['name'] ?? '';
-      prefs.setString("name", Information.name);
-
-      Information.surname = data['surname'] ?? '';
-      prefs.setString("surname", Information.surname);
-
-      Information.city = data['city'] ?? '';
-      prefs.setString("city", Information.city);
-
       Information.userId = data['user_id'] ?? '';
       prefs.setString("user_id", Information.userId);
 
       Information.badges = List<String>.from(data['badges'] ?? []);
       prefs.setStringList("badges", Information.badges);
     } else {
-      Information.name = prefs.getString("name") ?? '';
-      Information.surname = prefs.getString("surname") ?? '';
-      Information.city = prefs.getString("city") ?? '';
       Information.userId = prefs.getString("user_id") ?? '';
       Information.badges = prefs.getStringList("badges") ?? [];
     }
@@ -456,13 +520,11 @@ class AppLoader {
                     await _loadReviews(doc.id),
                   );
 
-                  if (restaurantModel.address.contains(Information.city)) {
-                    final now = DateTime.now();
-                    final oneWeekAgo = now.subtract(const Duration(days: 7));
-                    final createdAt = restaurantModel.createdAt.toDate();
+                  final now = DateTime.now();
+                  final ago = now.subtract(const Duration(days: 14));
+                  final createdAt = restaurantModel.createdAt.toDate();
 
-                    restaurantModel.isNew = createdAt.isAfter(oneWeekAgo);
-                  }
+                  restaurantModel.isNew = createdAt.isAfter(ago);
 
                   return restaurantModel;
                 }),
@@ -750,65 +812,6 @@ class AppLoader {
       debugPrint("❌ Pending Order silinirken hata oluştu: $e");
       return false;
     }
-  }
-
-  static Future<void> useCode(BuildContext context, String code) async {
-    final db = FirebaseFirestore.instance;
-
-    // kodu bul
-    final qs = await db
-        .collection('codes')
-        .where('code', isEqualTo: code)
-        .limit(1)
-        .get();
-
-    if (!context.mounted) return;
-    if (qs.docs.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Kod bulunamadı!")));
-      return;
-    }
-
-    final doc = qs.docs.first;
-    final ref = doc.reference;
-    final data = doc.data();
-
-    final int maximum = (data['maximum'] as num?)?.toInt() ?? 0;
-    final int usage = (data['usage'] as num?)?.toInt() ?? 0;
-    final int balance = (data['balance'] as num?)?.toInt() ?? 0;
-    final List<dynamic> users = (data['users'] as List?) ?? [];
-
-    // telefon zaten kullanmış mı?
-    if (users.contains(Information.phone)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Bu kodu zaten kullanmışsın!")));
-      return;
-    }
-    // limit dolmuş mu?
-    if (usage >= maximum) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Bu kodun kullanma sayısı bitmiş!")),
-      );
-      return;
-    }
-
-    // güncelle usage +1, kullanıcıyı ekle
-    await ref.update({
-      'usage': usage + 1,
-      'users': [...users, Information.phone],
-    });
-
-    // ödül ver
-    final String restaurantId = data['restaurant_id']?.toString() ?? '';
-    addCurrentStars(restaurantId, balance);
-
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text("$balance yıldız kazandın!")));
-    return;
   }
 
   static Future<String> createPendingOrder(OrderModel order) async {
