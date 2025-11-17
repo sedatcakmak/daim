@@ -67,7 +67,12 @@ class AppLoader {
           .get();
 
       if (doc.exists) {
-        var data = doc.data()!;
+        var data = doc.data();
+        if (data == null) {
+          debugPrint("❌ Restoran verisi boş ($restaurantId)");
+          return null;
+        }
+
         RestaurantModel restaurantModel = RestaurantModel.fromMap(
           doc.id,
           data,
@@ -110,6 +115,11 @@ class AppLoader {
   ) async {
     try {
       // Kullanıcının cüzdanını bul
+      if (Information.restaurant == null) {
+        debugPrint("❌ Restaurant bilgisi yüklenmemiş.");
+        return false;
+      }
+
       final walletQuery = await userDocRef
           .collection('wallets')
           .where('restaurant_id', isEqualTo: Information.restaurant!.id)
@@ -274,11 +284,15 @@ class AppLoader {
             'date': FieldValue.serverTimestamp(),
           });
 
-      Information.restaurants
+      final restaurant = Information.restaurants
           .where((element) => element.id == restaurantId)
-          .first
-          .reviews
-          .add(rating);
+          .firstOrNull;
+
+      if (restaurant != null) {
+        restaurant.reviews.add(rating);
+      } else {
+        debugPrint("⚠️ Restaurant bulunamadı (ID: $restaurantId)");
+      }
 
       debugPrint("Yorum başarıyla eklendi.");
       return true;
@@ -313,6 +327,11 @@ class AppLoader {
       );
 
       // 3. Restoran kontrolü
+      if (Information.restaurant == null) {
+        debugPrint("❌ Restaurant bilgisi yüklenmemiş.");
+        return null;
+      }
+
       if (order.restaurantId.isEmpty ||
           order.restaurantId != Information.restaurant!.id) {
         return null;
@@ -329,8 +348,8 @@ class AppLoader {
 
         if (userQuery.docs.isNotEmpty) {
           final userData = userQuery.docs.first.data();
-          order.name = userData['name'];
-          order.surname = userData['surname'];
+          order.name = userData['name'] ?? '';
+          order.surname = userData['surname'] ?? '';
         }
       } else {
         debugPrint("⚠️ Order içinde phone alanı boş");
@@ -436,12 +455,14 @@ class AppLoader {
       await pendingRef.delete();
       debugPrint("🗑️ Pending sipariş silindi");
 
-      await addActivity(
-        phone: order.phone,
-        amount: order.price,
-        message: "${Information.restaurant!.name} için sipariş oluşturdun!",
-        type: "order",
-      );
+      if (Information.restaurant != null) {
+        await addActivity(
+          phone: order.phone,
+          amount: order.price,
+          message: "${Information.restaurant!.name} için sipariş oluşturdun!",
+          type: "order",
+        );
+      }
     } catch (e) {
       debugPrint("❌ Hata: $e");
     }
@@ -505,12 +526,6 @@ class AppLoader {
       Information.restaurants =
           (await Future.wait(
                 restaurantDocs.docs.map((doc) async {
-                  /*
-                  if (doc.id == "89342613") {
-                    return null;
-                  }
-                  */
-
                   var data = doc.data() as Map<String, dynamic>;
 
                   RestaurantModel restaurantModel = RestaurantModel.fromMap(
