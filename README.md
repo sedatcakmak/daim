@@ -1,16 +1,43 @@
 # daim
 
-A new Flutter project.
+daim is a Flutter loyalty app for cafes and restaurants. Customers
+discover places, place orders, collect points and badges, and unlock
+membership tiers. Staff use the same app in employee mode to scan a
+customer's QR code and record their order.
+
+## Features
+
+- Phone verification on sign-up
+- Customer and employee modes
+- Restaurant list with Google Maps locations
+- Menu browsing and order flow with review step
+- QR code generation for customers and scanner for employees
+- Points, rewards, badges and membership tiers (silver / gold / diamond / premium)
+- Campaigns and notifications via Firebase Cloud Messaging
+- Turkish and English localization
+
+## Built With
+
+- Flutter (Dart SDK ^3.9)
+- Firebase: Core, Firestore, App Check, Crashlytics, Remote Config, Messaging
+- Provider for state management
+- google_maps_flutter, geolocator, permission_handler
+- mobile_scanner, qr_flutter
+- flutter_local_notifications, url_launcher, smooth_page_indicator
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+You'll need the Flutter SDK installed. Then:
 
-A few resources to get you started if this is your first Flutter project:
+```
+flutter pub get
+flutter run
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Configuration
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The app uses Firebase, Google Maps and FCM. You'll need your own
+Firebase project and config files (`google-services.json`,
+`GoogleService-Info.plist`, and a generated `firebase_options.dart`),
+plus a Google Maps API key configured in the Android and iOS native
+projects.
